@@ -1,6 +1,7 @@
 package main
 
 import (
+	"SociLinkApi/database"
 	"SociLinkApi/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -12,9 +13,14 @@ func main() {
 		panic(err)
 	}
 
+	db, err := database.SetupDb()
+	if err != nil {
+		panic(err)
+	}
+
 	router := gin.Default()
 
-	routes.SetRoutes(router)
+	routes.SetRoutes(router, db)
 
 	err = router.Run()
 

@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func UserRouterGroup(router *gin.RouterGroup, db *gorm.DB) {
+func SetUserRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	router.GET("/:id", func(context *gin.Context) {
 		GetUserRoute(context, db)
 	})

@@ -7,5 +7,5 @@ import (
 )
 
 func SetRoutes(router *gin.Engine, db *gorm.DB) {
-	userroutes.UserRouterGroup(router.Group("/users"), db)
+	userroutes.SetUserRoutes(router.Group("/users"), db)
 }

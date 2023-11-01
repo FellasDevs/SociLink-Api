@@ -4,7 +4,7 @@ import (
 	"SociLinkApi/models"
 )
 
-func main() {
+func RunMigrations() {
 	db, err := GetDbConnection()
 	if err != nil {
 		panic(err)

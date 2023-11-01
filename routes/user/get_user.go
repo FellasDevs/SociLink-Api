@@ -9,33 +9,29 @@ import (
 	"net/http"
 )
 
-type GetUserParams struct {
-	id uuid.UUID `uri:"string" binding:"required, string"`
-}
+func GetUserRoute(context *gin.Context, db *gorm.DB) {
+	idString := context.Param("id")
 
-func GetUserRoute(router *gin.Engine, db *gorm.DB) {
-	router.GET("/users/:id", func(context *gin.Context) {
-		var params GetUserParams
+	id, err := uuid.Parse(idString)
 
-		if err := context.ShouldBindUri(&params); err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{
-				"success": false,
-				"message": err,
-			})
-			return
-		}
-
-		user, err := usercontroller.GetUser(params.id, db)
-
-		if err != nil {
-			utils.SendUnknownError(err, context)
-			return
-		}
-
-		context.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"message": "",
-			"user":    user,
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": err.Error(),
 		})
+		return
+	}
+
+	user, err := usercontroller.GetUser(id, db)
+
+	if err != nil {
+		utils.SendUnknownError(err, context)
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "",
+		"user":    user,
 	})
 }

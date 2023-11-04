@@ -1,21 +1,33 @@
 package usercontroller
 
 import (
-	"SociLinkApi/models"
 	userrepository "SociLinkApi/repository/user"
-	"SociLinkApi/types/errors"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
 )
 
-func GetUsersByName(search string, db *gorm.DB) ([]models.User, *customerrors.RouteError) {
+func GetUsersByName(context *gin.Context, db *gorm.DB) {
+	search := context.Param("search")
+
 	if search == "" {
-		return nil, customerrors.NewRouteError(http.StatusBadRequest, "search cannot be empty")
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "search cannot be empty",
+		})
+		return
 	}
 
-	if user, err := userrepository.GetUsersByName(search, db); err != nil {
-		return nil, customerrors.NewRouteError(http.StatusInternalServerError, err.Error())
+	if users, err := userrepository.GetUsersByName(search, db); err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
 	} else {
-		return user, nil
+		context.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "usuários obtidos com sucesso",
+			"users":   users,
+		})
 	}
 }

@@ -1,20 +1,25 @@
 package usercontroller
 
 import (
-	"SociLinkApi/models"
 	userrepository "SociLinkApi/repository/user"
-	"SociLinkApi/types/errors"
 	"errors"
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/http"
 )
 
-func GetUserById(idString string, db *gorm.DB) (models.User, *customerrors.RouteError) {
+func GetUserById(context *gin.Context, db *gorm.DB) {
+	idString := context.Param("id")
+
 	id, err := uuid.Parse(idString)
 
 	if err != nil {
-		return models.User{}, customerrors.NewRouteError(http.StatusBadRequest, "id is not a valid uuid")
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "id is not a valid uuid",
+		})
+		return
 	}
 
 	if user, err := userrepository.GetUserById(id, db); err != nil {
@@ -26,8 +31,15 @@ func GetUserById(idString string, db *gorm.DB) (models.User, *customerrors.Route
 			statusCode = http.StatusInternalServerError
 		}
 
-		return models.User{}, customerrors.NewRouteError(statusCode, err.Error())
+		context.JSON(statusCode, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
 	} else {
-		return user, nil
+		context.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "usuário obtido com sucesso",
+			"user":    user,
+		})
 	}
 }

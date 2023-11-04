@@ -47,7 +47,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		Birthdate: birthdate,
 	}
 
-	createdUser, err := userrepository.CreateUser(user, db)
+	err = userrepository.CreateUser(&user, db)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -56,7 +56,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	token, err := authservice.CreateJWT(createdUser.Id, time.Hour*24)
+	token, err := authservice.CreateJWT(user.Id, time.Hour*24)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{

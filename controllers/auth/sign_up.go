@@ -12,7 +12,7 @@ import (
 )
 
 func SignUpController(context *gin.Context, db *gorm.DB) {
-	var userInfo dto.SignUpDto
+	var userInfo dto.SignUpRequestDto
 
 	if err := context.ShouldBindJSON(&userInfo); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
@@ -66,16 +66,18 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	signedUser := dto.SignInResponseDto{
-		Name:      createdUser.Name,
-		Email:     createdUser.Email,
-		Birthdate: createdUser.Birthdate.String(),
+	response := dto.SignUpResponseDto{
+		User: dto.PayloadUser{
+			Name:      user.Name,
+			Email:     user.Email,
+			Birthdate: user.Birthdate.String(),
+		},
+		AuthToken: token,
 	}
 
 	context.JSON(http.StatusOK, gin.H{
-		"success":   true,
-		"message":   "Usuário criado com sucesso!",
-		"user":      signedUser,
-		"authToken": token,
+		"success":  true,
+		"message":  "Usuário criado com sucesso!",
+		"response": response,
 	})
 }

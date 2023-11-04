@@ -25,7 +25,7 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		response := dto.GetUsersByNameDto{Users: make([]dto.PayloadUser, len(users))}
+		response := dto.GetUsersByNameResponseDto{Users: make([]dto.PayloadUser, len(users))}
 
 		for i, user := range users {
 			response.Users[i] = dto.PayloadUser{

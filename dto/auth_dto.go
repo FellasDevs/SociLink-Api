@@ -11,3 +11,9 @@ type SignInDto struct {
 	Email    string
 	Password string
 }
+
+type SignInResponseDto struct {
+	Name      string
+	Email     string
+	Birthdate string
+}

@@ -8,7 +8,7 @@ import (
 func GetUserByEmail(email string, db *gorm.DB) (models.User, error) {
 	user := models.User{Email: email}
 
-	result := db.First(&user)
+	result := db.Where(user).First(&user)
 
 	return user, result.Error
 }

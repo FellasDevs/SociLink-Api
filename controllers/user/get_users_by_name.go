@@ -36,9 +36,9 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 		}
 
 		context.JSON(http.StatusOK, gin.H{
-			"success":  true,
-			"message":  "usuários obtidos com sucesso",
-			"response": response,
+			"success": true,
+			"message": "usuários obtidos com sucesso",
+			"data":    response,
 		})
 	}
 }

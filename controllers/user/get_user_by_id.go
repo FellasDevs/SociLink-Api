@@ -44,9 +44,9 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 		}}
 
 		context.JSON(http.StatusOK, gin.H{
-			"success":  true,
-			"message":  "usuário obtido com sucesso",
-			"response": response,
+			"success": true,
+			"message": "usuário obtido com sucesso",
+			"data":    response,
 		})
 	}
 }

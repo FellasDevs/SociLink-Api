@@ -76,8 +76,8 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{
-		"success":  true,
-		"message":  "Usuário criado com sucesso!",
-		"response": response,
+		"success": true,
+		"message": "Usuário criado com sucesso!",
+		"data":    response,
 	})
 }

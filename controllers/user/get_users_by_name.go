@@ -1,6 +1,7 @@
 package usercontroller
 
 import (
+	"SociLinkApi/dto"
 	userrepository "SociLinkApi/repository/user"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -24,10 +25,20 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
+		response := dto.GetUsersByNameDto{Users: make([]dto.PayloadUser, len(users))}
+
+		for i, user := range users {
+			response.Users[i] = dto.PayloadUser{
+				Name:      user.Name,
+				Email:     user.Email,
+				Birthdate: user.Birthdate.String(),
+			}
+		}
+
 		context.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"message": "usuários obtidos com sucesso",
-			"users":   users,
+			"success":  true,
+			"message":  "usuários obtidos com sucesso",
+			"response": response,
 		})
 	}
 }

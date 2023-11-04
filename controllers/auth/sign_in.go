@@ -13,7 +13,7 @@ import (
 )
 
 func SignInController(context *gin.Context, db *gorm.DB) {
-	var userInfo dto.SignInDto
+	var userInfo dto.SignInRequestDto
 
 	if err := context.ShouldBindJSON(&userInfo); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
@@ -61,16 +61,18 @@ func SignInController(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	signedUser := dto.SignInResponseDto{
-		Name:      user.Name,
-		Email:     user.Email,
-		Birthdate: user.Birthdate.String(),
+	response := dto.SignInResponseDto{
+		User: dto.PayloadUser{
+			Name:      user.Name,
+			Email:     user.Email,
+			Birthdate: user.Birthdate.String(),
+		},
+		AuthToken: token,
 	}
 
 	context.JSON(http.StatusOK, gin.H{
-		"success":   true,
-		"message":   "Usuário logado com sucesso!",
-		"user":      signedUser,
-		"authToken": token,
+		"success":  true,
+		"message":  "Usuário logado com sucesso!",
+		"response": response,
 	})
 }

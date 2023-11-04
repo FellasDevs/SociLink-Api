@@ -5,8 +5,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateUser(user models.User, db *gorm.DB) (models.User, error) {
+func CreateUser(user *models.User, db *gorm.DB) error {
 	result := db.Create(&user)
 
-	return user, result.Error
+	return result.Error
 }

@@ -14,15 +14,15 @@ func main() {
 		panic(err)
 	}
 
-	args := os.Args[1:]
-	if args[0] == "--migrate" {
-		database.Migrate()
-		return
-	}
-
 	db, err := database.GetDbConnection()
 	if err != nil {
 		panic(err)
+	}
+
+	args := os.Args[1:]
+	if len(args) > 0 && args[0] == "--migrate" {
+		database.Migrate(db)
+		return
 	}
 
 	router := gin.Default()

@@ -1,9 +1,9 @@
 package dto
 
-type GetUserByIdDto struct {
+type GetUserByIdResponseDto struct {
 	User PayloadUser
 }
 
-type GetUsersByNameDto struct {
+type GetUsersByNameResponseDto struct {
 	Users []PayloadUser
 }

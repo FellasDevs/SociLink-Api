@@ -9,8 +9,8 @@ import (
 	"net/http"
 )
 
-func SignUp(context *gin.Context, db *gorm.DB) {
-	var userInfo dto.SignUpDto
+func SignIn(context *gin.Context, db *gorm.DB) {
+	var userInfo dto.SignInDto
 
 	if err := context.ShouldBindJSON(&userInfo); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
@@ -20,7 +20,7 @@ func SignUp(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	_, token, err := authcontroller.SignUpController(userInfo, db)
+	_, token, err := authcontroller.SignInController(userInfo, db)
 	if err != nil {
 		utils.SendUnknownError(err, context)
 		return
@@ -28,7 +28,7 @@ func SignUp(context *gin.Context, db *gorm.DB) {
 
 	context.JSON(http.StatusOK, gin.H{
 		"success":   true,
-		"message":   "Usuário criado com sucesso!",
+		"message":   "Usuário logado com sucesso!",
 		"authToken": token,
 	})
 }

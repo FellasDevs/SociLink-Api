@@ -20,7 +20,7 @@ func main() {
 	}
 
 	args := os.Args[1:]
-	if args[0] == "--migrate" {
+	if len(args) > 0 && args[0] == "--migrate" {
 		database.Migrate(db)
 		return
 	}

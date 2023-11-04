@@ -2,15 +2,11 @@ package database
 
 import (
 	"SociLinkApi/models"
+	"gorm.io/gorm"
 )
 
-func RunMigrations() {
-	db, err := GetDbConnection()
-	if err != nil {
-		panic(err)
-	}
-
-	if err = db.AutoMigrate(&models.User{}); err != nil {
+func Migrate(db *gorm.DB) {
+	if err := db.AutoMigrate(&models.User{}); err != nil {
 		panic(err)
 	}
 }

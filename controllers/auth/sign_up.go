@@ -56,8 +56,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	token, err := authservice.CreateAuthToken(createdUser.ID, time.Hour*24)
-
+	token, err := authservice.CreateAuthToken(user.ID, time.Hour*24)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,

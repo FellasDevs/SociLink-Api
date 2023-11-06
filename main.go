@@ -5,6 +5,7 @@ import (
 	"SociLinkApi/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"os"
 )
 
 func main() {
@@ -13,9 +14,15 @@ func main() {
 		panic(err)
 	}
 
-	db, err := database.SetupDb()
+	db, err := database.GetDbConnection()
 	if err != nil {
 		panic(err)
+	}
+
+	args := os.Args[1:]
+	if len(args) > 0 && args[0] == "--migrate" {
+		database.Migrate(db)
+		return
 	}
 
 	router := gin.Default()

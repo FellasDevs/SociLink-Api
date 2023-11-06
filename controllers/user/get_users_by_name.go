@@ -25,7 +25,7 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		response := dto.GetUsersByNameDto{Users: make([]dto.PayloadUser, len(users))}
+		response := dto.GetUsersByNameResponseDto{Users: make([]dto.PayloadUser, len(users))}
 
 		for i, user := range users {
 			response.Users[i] = dto.PayloadUser{
@@ -36,9 +36,9 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 		}
 
 		context.JSON(http.StatusOK, gin.H{
-			"success":  true,
-			"message":  "usuários obtidos com sucesso",
-			"response": response,
+			"success": true,
+			"message": "usuários obtidos com sucesso",
+			"data":    response,
 		})
 	}
 }

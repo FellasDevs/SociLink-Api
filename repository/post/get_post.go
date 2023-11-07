@@ -10,7 +10,7 @@ import (
 func GetPost(id uuid.UUID, db *gorm.DB) (models.Post, error) {
 	var post models.Post
 
-	result := db.First(&post, id)
+	result := db.Preload("Users").First(&post, id)
 
 	return post, result.Error
 }

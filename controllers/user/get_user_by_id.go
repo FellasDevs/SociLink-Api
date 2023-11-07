@@ -37,9 +37,8 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		response := dto.GetUserByIdResponseDto{User: dto.PayloadUser{
+		response := dto.GetUserByIdResponseDto{User: dto.UserResponseDto{
 			Name:      user.Name,
-			Email:     user.Email,
 			Birthdate: user.Birthdate.String(),
 		}}
 

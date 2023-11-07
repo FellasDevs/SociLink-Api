@@ -13,7 +13,7 @@ type EditPostRequestDto struct {
 }
 type GetPostResponseDto struct {
 	Id         string
-	User       PayloadUser
+	User       UserResponseDto
 	Content    string
 	Images     []string
 	Visibility string

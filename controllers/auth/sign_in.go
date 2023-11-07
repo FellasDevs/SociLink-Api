@@ -62,9 +62,8 @@ func SignInController(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.SignInResponseDto{
-		User: dto.PayloadUser{
+		User: dto.UserResponseDto{
 			Name:      user.Name,
-			Email:     user.Email,
 			Birthdate: user.Birthdate.String(),
 		},
 		AuthToken: token,

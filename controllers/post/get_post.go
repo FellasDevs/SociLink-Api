@@ -38,22 +38,23 @@ func GetPost(context *gin.Context, db *gorm.DB) {
 			"success": false,
 			"message": err.Error(),
 		})
-	} else {
-		response := dto.GetPostResponseDto{
-			Id: post.ID.String(),
-			User: dto.PayloadUser{
-				Name:      post.User.Name,
-				Birthdate: post.User.Birthdate.String(),
-			},
-			Content:    post.Content,
-			Visibility: post.Visibility,
-			Images:     post.Images,
-		}
-
-		context.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"message": "Post obtido com sucesso",
-			"data":    response,
-		})
+		return
 	}
+
+	response := dto.GetPostResponseDto{
+		Id: post.ID.String(),
+		User: dto.UserResponseDto{
+			Name:      post.User.Name,
+			Birthdate: post.User.Birthdate.String(),
+		},
+		Content:    post.Content,
+		Visibility: post.Visibility,
+		Images:     post.Images,
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "Post obtido com sucesso",
+		"data":    response,
+	})
 }

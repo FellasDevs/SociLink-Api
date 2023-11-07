@@ -2,9 +2,10 @@ package routes
 
 import (
 	postcontroller "SociLinkApi/controllers/post"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
@@ -28,9 +29,6 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	})
 
 	router.DELETE("/:id", func(context *gin.Context) {
-		context.JSON(http.StatusNotImplemented, gin.H{
-			"success": false,
-			"message": "Rota não implementada",
-		})
+		postcontroller.DeletePost(context, db)
 	})
 }

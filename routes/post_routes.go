@@ -1,6 +1,7 @@
 package routes
 
 import (
+	postcontroller "SociLinkApi/controllers/post"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -8,17 +9,11 @@ import (
 
 func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	router.POST("/create", func(context *gin.Context) {
-		context.JSON(http.StatusNotImplemented, gin.H{
-			"success": false,
-			"message": "Rota não implementada",
-		})
+		postcontroller.CreatePost(context, db)
 	})
 
 	router.GET("/:id", func(context *gin.Context) {
-		context.JSON(http.StatusNotImplemented, gin.H{
-			"success": false,
-			"message": "Rota não implementada",
-		})
+		postcontroller.GetPost(context, db)
 	})
 
 	router.GET("/search", func(context *gin.Context) {
@@ -29,10 +24,7 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	})
 
 	router.PUT("/:id", func(context *gin.Context) {
-		context.JSON(http.StatusNotImplemented, gin.H{
-			"success": false,
-			"message": "Rota não implementada",
-		})
+		postcontroller.EditPost(context, db)
 	})
 
 	router.DELETE("/:id", func(context *gin.Context) {

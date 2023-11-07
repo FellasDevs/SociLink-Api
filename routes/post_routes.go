@@ -9,7 +9,7 @@ import (
 )
 
 func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
-	router.POST("/create", func(context *gin.Context) {
+	router.POST("", func(context *gin.Context) {
 		router.Use(middlewares.AuthenticateUser)
 
 		postcontroller.CreatePost(context, db)

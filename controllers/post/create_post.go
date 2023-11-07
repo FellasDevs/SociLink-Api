@@ -17,7 +17,7 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 	if err := context.ShouldBindJSON(&postData); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": err,
+			"message": err.Error(),
 		})
 		return
 	}

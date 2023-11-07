@@ -12,18 +12,12 @@ type SignInRequestDto struct {
 	Password string
 }
 
-type PayloadUser struct {
-	Name      string
-	Email     string
-	Birthdate string
-}
-
 type SignInResponseDto struct {
-	User      PayloadUser
+	User      UserResponseDto
 	AuthToken string
 }
 
 type SignUpResponseDto struct {
-	User      PayloadUser
+	User      UserResponseDto
 	AuthToken string
 }

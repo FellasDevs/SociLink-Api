@@ -4,12 +4,13 @@ import (
 	postcontroller "SociLinkApi/controllers/post"
 	"net/http"
 
+	"SociLinkApi/middlewares"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
-	router.POST("/create", func(context *gin.Context) {
+	router.POST("", middlewares.AuthenticateUser, func(context *gin.Context) {
 		postcontroller.CreatePost(context, db)
 	})
 
@@ -24,11 +25,11 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		})
 	})
 
-	router.PUT("/:id", func(context *gin.Context) {
+	router.PUT("/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
 		postcontroller.EditPost(context, db)
 	})
 
-	router.DELETE("/:id", func(context *gin.Context) {
+	router.DELETE("/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
 		postcontroller.DeletePost(context, db)
 	})
 }

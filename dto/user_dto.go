@@ -1,9 +1,14 @@
 package dto
 
+type UserResponseDto struct {
+	Name      string
+	Birthdate string
+}
+
 type GetUserByIdResponseDto struct {
-	User PayloadUser
+	User UserResponseDto
 }
 
 type GetUsersByNameResponseDto struct {
-	Users []PayloadUser
+	Users []UserResponseDto
 }

@@ -17,7 +17,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 	if err := context.ShouldBindJSON(&userInfo); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": err,
+			"message": err.Error(),
 		})
 		return
 	}
@@ -26,7 +26,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"message": err,
+			"message": err.Error(),
 		})
 		return
 	}
@@ -35,7 +35,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"message": err,
+			"message": err.Error(),
 		})
 		return
 	}
@@ -51,7 +51,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"message": err,
+			"message": err.Error(),
 		})
 		return
 	}
@@ -60,21 +60,20 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"message": err,
+			"message": err.Error(),
 		})
 		return
 	}
 
 	response := dto.SignUpResponseDto{
-		User: dto.PayloadUser{
+		User: dto.UserResponseDto{
 			Name:      user.Name,
-			Email:     user.Email,
 			Birthdate: user.Birthdate.String(),
 		},
 		AuthToken: token,
 	}
 
-	context.JSON(http.StatusOK, gin.H{
+	context.JSON(http.StatusCreated, gin.H{
 		"success": true,
 		"message": "Usuário criado com sucesso!",
 		"data":    response,

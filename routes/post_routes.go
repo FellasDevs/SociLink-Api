@@ -9,9 +9,7 @@ import (
 )
 
 func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
-	router.POST("", func(context *gin.Context) {
-		router.Use(middlewares.AuthenticateUser)
-
+	router.POST("", middlewares.AuthenticateUser, func(context *gin.Context) {
 		postcontroller.CreatePost(context, db)
 	})
 
@@ -26,15 +24,11 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		})
 	})
 
-	router.PUT("/:id", func(context *gin.Context) {
-		router.Use(middlewares.AuthenticateUser)
-
+	router.PUT("/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
 		postcontroller.EditPost(context, db)
 	})
 
-	router.DELETE("/:id", func(context *gin.Context) {
-		router.Use(middlewares.AuthenticateUser)
-
+	router.DELETE("/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
 		context.JSON(http.StatusNotImplemented, gin.H{
 			"success": false,
 			"message": "Rota não implementada",

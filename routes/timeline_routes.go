@@ -8,9 +8,7 @@ import (
 )
 
 func TimelineRoutes(router *gin.RouterGroup, db *gorm.DB) {
-	router.GET("", func(context *gin.Context) {
-		router.Use(middlewares.AuthenticateUser)
-
+	router.GET("", middlewares.AuthenticateUser, func(context *gin.Context) {
 		context.JSON(http.StatusNotImplemented, gin.H{
 			"success": false,
 			"message": "Rota não implementada",

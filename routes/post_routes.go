@@ -2,6 +2,7 @@ package routes
 
 import (
 	postcontroller "SociLinkApi/controllers/post"
+	"SociLinkApi/middlewares"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -9,6 +10,8 @@ import (
 
 func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	router.POST("/create", func(context *gin.Context) {
+		router.Use(middlewares.AuthenticateUser)
+
 		postcontroller.CreatePost(context, db)
 	})
 
@@ -24,10 +27,14 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	})
 
 	router.PUT("/:id", func(context *gin.Context) {
+		router.Use(middlewares.AuthenticateUser)
+
 		postcontroller.EditPost(context, db)
 	})
 
 	router.DELETE("/:id", func(context *gin.Context) {
+		router.Use(middlewares.AuthenticateUser)
+
 		context.JSON(http.StatusNotImplemented, gin.H{
 			"success": false,
 			"message": "Rota não implementada",

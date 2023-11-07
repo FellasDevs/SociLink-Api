@@ -9,11 +9,9 @@ import (
 )
 
 func UserRoutes(router *gin.RouterGroup, db *gorm.DB) {
-	router.Use(func(context *gin.Context) {
-		middlewares.AuthenticateUser(context, db)
-	})
-
 	router.GET("/self", func(context *gin.Context) {
+		router.Use(middlewares.AuthenticateUser)
+
 		context.JSON(http.StatusNotImplemented, gin.H{
 			"success": false,
 			"message": "Rota não implementada",

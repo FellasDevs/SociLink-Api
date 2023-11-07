@@ -23,7 +23,7 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 
 	post, err := postrepository.GetPost(postID, db)
 	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
+		context.JSON(http.StatusNotFound, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
@@ -32,7 +32,7 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 
 	uid, exists := context.Get("userId")
 	if !exists {
-		context.JSON(http.StatusBadRequest, gin.H{
+		context.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
 			"message": "Token de autentificação não encontrada",
 		})

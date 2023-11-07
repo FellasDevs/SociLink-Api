@@ -14,7 +14,6 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 	idString := context.Param("id")
 
 	id, err := uuid.Parse(idString)
-
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,

@@ -24,7 +24,6 @@ func GetPost(context *gin.Context, db *gorm.DB) {
 	}
 
 	post, err := postrepository.GetPost(postId, db)
-
 	if err != nil {
 		var statusCode int
 

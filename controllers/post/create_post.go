@@ -26,15 +26,13 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 	if !exists {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "token de autentificação não encontrada",
+			"message": "token de autenticação não encontrado",
 		})
 		return
 	}
 
-	userId := uid.(uuid.UUID)
-
 	post := models.Post{
-		UserID:     userId,
+		UserID:     uid.(uuid.UUID),
 		Content:    postData.Content,
 		Images:     postData.Images,
 		Visibility: postData.Visibility,
@@ -49,9 +47,8 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{
+	context.JSON(http.StatusCreated, gin.H{
 		"success": true,
 		"message": "Post criado com sucesso!",
-		"data":    postData,
 	})
 }

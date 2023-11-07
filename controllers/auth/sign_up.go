@@ -73,7 +73,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		AuthToken: token,
 	}
 
-	context.JSON(http.StatusOK, gin.H{
+	context.JSON(http.StatusCreated, gin.H{
 		"success": true,
 		"message": "Usuário criado com sucesso!",
 		"data":    response,

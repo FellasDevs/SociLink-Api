@@ -43,13 +43,12 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 	if !exists {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "token de autentificação não encontrada",
+			"message": "token de autenticação não encontrado",
 		})
 		return
 	}
 
 	userId := uid.(uuid.UUID)
-
 	if userId != post.UserID {
 		context.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
@@ -70,6 +69,5 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 	context.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "Post editado com sucesso!",
-		"data":    postData,
 	})
 }

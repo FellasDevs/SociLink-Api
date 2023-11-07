@@ -14,7 +14,6 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 	idString := context.Param("id")
 
 	id, err := uuid.Parse(idString)
-
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -37,9 +36,8 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		response := dto.GetUserByIdResponseDto{User: dto.PayloadUser{
+		response := dto.GetUserByIdResponseDto{User: dto.UserResponseDto{
 			Name:      user.Name,
-			Email:     user.Email,
 			Birthdate: user.Birthdate.String(),
 		}}
 

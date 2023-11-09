@@ -43,6 +43,7 @@ func GetPost(context *gin.Context, db *gorm.DB) {
 	response := dto.GetPostResponseDto{
 		Id: post.ID.String(),
 		User: dto.UserResponseDto{
+			Id:        post.User.ID.String(),
 			Name:      post.User.Name,
 			Birthdate: post.User.Birthdate.String(),
 		},

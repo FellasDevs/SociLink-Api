@@ -9,7 +9,7 @@ import (
 func GetUserById(id uuid.UUID, db *gorm.DB) (models.User, error) {
 	var user models.User
 
-	result := db.First(&user, id)
+	result := db.Preload("Users").First(&user, id)
 
 	return user, result.Error
 }

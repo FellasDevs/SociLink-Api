@@ -8,7 +8,7 @@ import (
 )
 
 func DeletePost(postID uuid.UUID, db *gorm.DB) error {
-	result := db.Where("id = ?", postID).Delete(&models.Post{})
+	result := db.Delete(&models.Post{ID: postID})
 
 	return result.Error
 }

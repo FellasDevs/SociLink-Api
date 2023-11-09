@@ -69,7 +69,10 @@ func AnswerFriendshipRequest(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if err := frienshiprepository.AnswerFriendshipRequest(requestId, params.Answer, db); err != nil {
+	friendship.Accepted = params.Answer
+	friendship.Pending = false
+
+	if err := frienshiprepository.UpdateFriendshipRequest(friendship, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

@@ -25,7 +25,7 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		})
 	})
 
-	router.PUT("/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
+	router.PUT("", middlewares.AuthenticateUser, func(context *gin.Context) {
 		postcontroller.EditPost(context, db)
 	})
 

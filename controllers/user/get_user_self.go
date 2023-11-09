@@ -10,19 +10,17 @@ import (
 	"net/http"
 )
 
-func GetUserById(context *gin.Context, db *gorm.DB) {
-	idString := context.Param("id")
-
-	id, err := uuid.Parse(idString)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
+func GetSelf(context *gin.Context, db *gorm.DB) {
+	userId, exists := context.Get("userId")
+	if !exists {
+		context.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
-			"message": "id is not a valid uuid",
+			"message": "userId not found in context",
 		})
 		return
 	}
 
-	if user, err := userrepository.GetUserById(id, db); err != nil {
+	if user, err := userrepository.GetUserById(userId.(uuid.UUID), db); err != nil {
 		var statusCode int
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -37,7 +35,6 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 		})
 	} else {
 		response := dto.GetUserByIdResponseDto{User: dto.UserResponseDto{
-			Id:        user.ID.String(),
 			Name:      user.Name,
 			Birthdate: user.Birthdate.String(),
 		}}

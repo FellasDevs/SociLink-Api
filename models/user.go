@@ -14,4 +14,5 @@ type User struct {
 	Birthdate time.Time `gorm:"not null"`
 	CreatedAt time.Time `gorm:"index"`
 	UpdatedAt time.Time
+	Friends   []*User `gorm:"many2many:friendships"`
 }

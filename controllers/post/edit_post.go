@@ -57,6 +57,10 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	post.Images = postData.Images
+	post.Content = postData.Content
+	post.Visibility = postData.Visibility
+
 	err = postrepository.UpdatePost(&post, db)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{

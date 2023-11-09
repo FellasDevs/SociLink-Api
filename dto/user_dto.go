@@ -1,6 +1,7 @@
 package dto
 
 type UserResponseDto struct {
+	Id        string
 	Name      string
 	Birthdate string
 }

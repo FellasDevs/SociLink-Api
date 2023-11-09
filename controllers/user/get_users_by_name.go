@@ -29,6 +29,7 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 
 		for i, user := range users {
 			response.Users[i] = dto.UserResponseDto{
+				Id:        user.ID.String(),
 				Name:      user.Name,
 				Birthdate: user.Birthdate.String(),
 			}

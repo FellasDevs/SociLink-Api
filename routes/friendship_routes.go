@@ -11,6 +11,10 @@ func FriendshipRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	router.Use(middlewares.AuthenticateUser)
 
 	router.GET("", func(context *gin.Context) {
+		friendshipcontroller.GetFriends(context, db)
+	})
+
+	router.GET("/requests", func(context *gin.Context) {
 		friendshipcontroller.GetAllFriendshipRequests(context, db)
 	})
 

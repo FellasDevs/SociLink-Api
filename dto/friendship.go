@@ -10,7 +10,7 @@ type AnswerFriendshipRequestDto struct {
 	Answer    bool
 }
 
-type GetFriendshipRequestsResponseDto struct {
+type FriendshipResponseDto struct {
 	Id        uuid.UUID
 	User      UserResponseDto
 	CreatedAt time.Time

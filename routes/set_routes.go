@@ -7,6 +7,7 @@ import (
 
 func SetRoutes(router *gin.Engine, db *gorm.DB) {
 	UserRoutes(router.Group("/users"), db)
+	FriendshipRoutes(router.Group("/friendships"), db)
 	AuthRoutes(router.Group("/auth"), db)
 	PostRoutes(router.Group("/posts"), db)
 	TimelineRoutes(router.Group("/timeline"), db)

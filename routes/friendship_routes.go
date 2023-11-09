@@ -23,7 +23,7 @@ func FriendshipRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	})
 
 	router.POST("/answer", func(context *gin.Context) {
-		friendshipcontroller.AnswerFriendshipRequests(context, db)
+		friendshipcontroller.AnswerFriendshipRequest(context, db)
 	})
 
 	router.DELETE("/:id", func(context *gin.Context) {

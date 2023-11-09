@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func AnswerFriendshipRequests(context *gin.Context, db *gorm.DB) {
+func AnswerFriendshipRequest(context *gin.Context, db *gorm.DB) {
 	uid, exists := context.Get("userId")
 	if !exists {
 		context.JSON(http.StatusUnauthorized, gin.H{

@@ -27,6 +27,12 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 					Id:        friend.User.ID.String(),
 					Name:      friend.User.Name,
 					Birthdate: friend.User.Birthdate.String(),
+					Nickname:  friend.User.Nickname,
+					Country:   friend.User.Country,
+					City:      friend.User.City,
+					Picture:   friend.User.Picture,
+					Banner:    friend.User.Banner,
+					CreatedAt: friend.User.CreatedAt.String(),
 				},
 				CreatedAt: friend.CreatedAt,
 			}

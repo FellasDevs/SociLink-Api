@@ -21,7 +21,6 @@ type GetUsersByNameResponseDto struct {
 }
 
 type EditUserInfoRequestDto struct {
-	Id        string
 	Name      string
 	Nickname  string
 	Birthdate string

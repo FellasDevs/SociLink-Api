@@ -11,6 +11,8 @@ import (
 )
 
 func EditUserInfo(context *gin.Context, db *gorm.DB) {
+	uid, _ := context.Get("userId")
+
 	var userInfo dto.EditUserInfoRequestDto
 
 	if err := context.ShouldBindJSON(&userInfo); err != nil {
@@ -21,16 +23,7 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	userId, err := uuid.Parse(userInfo.Id)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	user, err := userrepository.GetUserById(userId, db)
+	user, err := userrepository.GetUserById(uid.(uuid.UUID), db)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,

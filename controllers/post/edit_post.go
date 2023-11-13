@@ -39,14 +39,7 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	uid, exists := context.Get("userId")
-	if !exists {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "token de autenticação não encontrado",
-		})
-		return
-	}
+	uid, _ := context.Get("userId")
 
 	userId := uid.(uuid.UUID)
 	if userId != post.UserID {
@@ -57,9 +50,15 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	post.Images = postData.Images
-	post.Content = postData.Content
-	post.Visibility = postData.Visibility
+	if postData.Images != nil {
+		post.Images = postData.Images
+	}
+	if postData.Content != "" {
+		post.Content = postData.Content
+	}
+	if postData.Visibility != "" {
+		post.Visibility = postData.Visibility
+	}
 
 	err = postrepository.UpdatePost(&post, db)
 	if err != nil {

@@ -20,3 +20,7 @@ type GetPostResponseDto struct {
 	Images     []string
 	Visibility string
 }
+
+type TimelineResponseDto struct {
+	Posts []GetPostResponseDto
+}

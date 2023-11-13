@@ -27,7 +27,13 @@ func GetOwnTimeline(context *gin.Context, db *gorm.DB) {
 
 	userIds[0] = userId
 	for i, friend := range friends {
-		userIds[i+1] = friend.FriendID
+		id := friend.FriendID
+
+		if friend.FriendID == userId {
+			id = friend.UserID
+		}
+
+		userIds[i+1] = id
 	}
 
 	if posts, err := postrepository.GetPostsByUsers(userIds, db); err != nil {

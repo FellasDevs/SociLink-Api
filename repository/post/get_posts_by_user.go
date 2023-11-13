@@ -10,7 +10,7 @@ import (
 func GetPostsByUser(userId uuid.UUID, db *gorm.DB) ([]models.Post, error) {
 	var posts []models.Post
 
-	result := db.Preload(clause.Associations).Where("user_id = ?", userId).Order("created_at").Find(&posts)
+	result := db.Preload(clause.Associations).Where("user_id = ?", userId).Order("created_at desc").Find(&posts)
 
 	return posts, result.Error
 }

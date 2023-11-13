@@ -40,6 +40,12 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 			Id:        user.ID.String(),
 			Name:      user.Name,
 			Birthdate: user.Birthdate.String(),
+			Nickname:  user.Nickname,
+			Country:   user.Country,
+			City:      user.City,
+			Picture:   user.Picture,
+			Banner:    user.Banner,
+			CreatedAt: user.CreatedAt.String(),
 		}}
 
 		context.JSON(http.StatusOK, gin.H{

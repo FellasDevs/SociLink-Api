@@ -12,6 +12,10 @@ func UserRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		usercontroller.GetSelf(context, db)
 	})
 
+	router.PUT("/self", middlewares.AuthenticateUser, func(context *gin.Context) {
+		usercontroller.EditUserInfo(context, db)
+	})
+
 	router.GET("/:id", func(context *gin.Context) {
 		usercontroller.GetUserById(context, db)
 	})

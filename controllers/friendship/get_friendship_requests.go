@@ -27,6 +27,12 @@ func GetAllFriendshipRequests(context *gin.Context, db *gorm.DB) {
 					Id:        request.User.ID.String(),
 					Name:      request.User.Name,
 					Birthdate: request.User.Birthdate.String(),
+					Nickname:  request.User.Nickname,
+					Country:   request.User.Country,
+					City:      request.User.City,
+					Picture:   request.User.Picture,
+					Banner:    request.User.Banner,
+					CreatedAt: request.User.CreatedAt.String(),
 				},
 				CreatedAt: request.CreatedAt,
 			}

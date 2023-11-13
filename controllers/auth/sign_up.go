@@ -22,7 +22,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	password, err := authservice.EncryptPassword(userInfo.Password)
+	birthdate, err := authservice.ParseBirthdate(userInfo.Birthdate)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -31,7 +31,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	birthdate, err := authservice.ParseBirthdate(userInfo.Birthdate)
+	password, err := authservice.EncryptPassword(userInfo.Password)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -45,6 +45,9 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		Email:     userInfo.Email,
 		Password:  password,
 		Birthdate: birthdate,
+		Nickname:  userInfo.Nickname,
+		Country:   userInfo.Country,
+		City:      userInfo.City,
 	}
 
 	err = userrepository.CreateUser(&user, db)
@@ -67,8 +70,13 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 
 	response := dto.SignUpResponseDto{
 		User: dto.UserResponseDto{
+			Id:        user.ID.String(),
 			Name:      user.Name,
+			Nickname:  user.Nickname,
 			Birthdate: user.Birthdate.String(),
+			Country:   user.Country,
+			City:      user.City,
+			CreatedAt: user.CreatedAt.String(),
 		},
 		AuthToken: token,
 	}

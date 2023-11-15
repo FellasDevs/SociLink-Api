@@ -3,6 +3,7 @@ package postcontroller
 import (
 	"SociLinkApi/dto"
 	postrepository "SociLinkApi/repository/post"
+	authtypes "SociLinkApi/types/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -57,7 +58,15 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		post.Content = postData.Content
 	}
 	if postData.Visibility != "" {
-		post.Visibility = postData.Visibility
+		visibility := authtypes.Public
+
+		if postData.Visibility == "private" {
+			visibility = authtypes.Private
+		} else if visibility == "friends" {
+			visibility = authtypes.Friends
+		}
+
+		post.Visibility = string(visibility)
 	}
 
 	err = postrepository.UpdatePost(&post, db)

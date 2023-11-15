@@ -24,3 +24,7 @@ type SignUpResponseDto struct {
 	User      UserResponseDto
 	AuthToken string
 }
+
+type AuthHeader struct {
+	AuthToken string `header:"Authorization"`
+}

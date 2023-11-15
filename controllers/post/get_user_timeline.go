@@ -2,7 +2,9 @@ package postcontroller
 
 import (
 	"SociLinkApi/dto"
+	frienshiprepository "SociLinkApi/repository/frienship"
 	postrepository "SociLinkApi/repository/post"
+	authtypes "SociLinkApi/types/auth"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -10,9 +12,9 @@ import (
 )
 
 func GetUserTimeline(context *gin.Context, db *gorm.DB) {
-	uid := context.Param("id")
+	paramId := context.Param("id")
 
-	userId, err := uuid.Parse(uid)
+	paramUserId, err := uuid.Parse(paramId)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -21,7 +23,20 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if posts, err := postrepository.GetPostsByUser(userId, db); err != nil {
+	visibility := authtypes.Public
+
+	uid, exists := context.Get("userId")
+	if exists {
+		userId := uid.(uuid.UUID)
+
+		if userId == paramUserId {
+			visibility = authtypes.Private
+		} else if _, err := frienshiprepository.GetFriendshipByUsers(userId, paramUserId, db); err == nil {
+			visibility = authtypes.Friends
+		}
+	}
+
+	if posts, err := postrepository.GetPostsByUser(paramUserId, visibility, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

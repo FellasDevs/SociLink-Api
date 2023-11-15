@@ -4,13 +4,14 @@ import (
 	"SociLinkApi/dto"
 	frienshiprepository "SociLinkApi/repository/frienship"
 	postrepository "SociLinkApi/repository/post"
+	authtypes "SociLinkApi/types/auth"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/http"
 )
 
-func GetOwnTimeline(context *gin.Context, db *gorm.DB) {
+func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
 	userId := uid.(uuid.UUID)
 
@@ -36,7 +37,7 @@ func GetOwnTimeline(context *gin.Context, db *gorm.DB) {
 		userIds[i+1] = id
 	}
 
-	if posts, err := postrepository.GetPostsByUsers(userIds, db); err != nil {
+	if posts, err := postrepository.GetPostsByUsers(userIds, authtypes.Friends, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

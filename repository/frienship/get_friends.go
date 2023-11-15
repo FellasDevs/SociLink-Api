@@ -8,9 +8,13 @@ import (
 )
 
 func GetFriendships(userId uuid.UUID, db *gorm.DB) ([]models.Friendship, error) {
-	var friends []models.Friendship
+	var friendships []models.Friendship
 
-	result := db.Preload(clause.Associations).Where(models.Friendship{UserID: userId, Accepted: true}).Or(models.Friendship{FriendID: userId, Accepted: true}).Find(&friends)
+	query := db.Preload(clause.Associations)
 
-	return friends, result.Error
+	query = query.Where(models.Friendship{UserID: userId, Accepted: true}).Or(models.Friendship{FriendID: userId, Accepted: true})
+
+	result := query.Find(&friendships)
+
+	return friendships, result.Error
 }

@@ -11,30 +11,36 @@ import (
 
 func GetFriends(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
+	userId := uid.(uuid.UUID)
 
-	if friends, err := frienshiprepository.GetFriendships(uid.(uuid.UUID), db); err != nil {
+	if friendships, err := frienshiprepository.GetFriendships(userId, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
 	} else {
-		response := make([]dto.FriendshipResponseDto, len(friends))
+		response := make([]dto.FriendshipResponseDto, len(friendships))
 
-		for i, friend := range friends {
+		for i, friendship := range friendships {
+			user := friendship.User
+			if friendship.UserID == userId {
+				user = friendship.Friend
+			}
+
 			response[i] = dto.FriendshipResponseDto{
-				Id: friend.ID,
+				Id: friendship.ID,
 				User: dto.UserResponseDto{
-					Id:        friend.User.ID.String(),
-					Name:      friend.User.Name,
-					Birthdate: friend.User.Birthdate.String(),
-					Nickname:  friend.User.Nickname,
-					Country:   friend.User.Country,
-					City:      friend.User.City,
-					Picture:   friend.User.Picture,
-					Banner:    friend.User.Banner,
-					CreatedAt: friend.User.CreatedAt.String(),
+					Id:        user.ID.String(),
+					Name:      user.Name,
+					Birthdate: user.Birthdate.String(),
+					Nickname:  user.Nickname,
+					Country:   user.Country,
+					City:      user.City,
+					Picture:   user.Picture,
+					Banner:    user.Banner,
+					CreatedAt: user.CreatedAt.String(),
 				},
-				CreatedAt: friend.CreatedAt,
+				CreatedAt: friendship.CreatedAt,
 			}
 		}
 

@@ -2,8 +2,6 @@ package routes
 
 import (
 	postcontroller "SociLinkApi/controllers/post"
-	"net/http"
-
 	"SociLinkApi/middlewares"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -18,11 +16,8 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		postcontroller.GetPost(context, db)
 	})
 
-	router.GET("/search", func(context *gin.Context) {
-		context.JSON(http.StatusNotImplemented, gin.H{
-			"success": false,
-			"message": "Rota não implementada",
-		})
+	router.GET("/search/:search", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
+		postcontroller.SearchPosts(context, db)
 	})
 
 	router.PUT("", middlewares.AuthenticateUser, func(context *gin.Context) {

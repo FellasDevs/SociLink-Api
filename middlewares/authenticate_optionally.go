@@ -9,14 +9,10 @@ import (
 	"strings"
 )
 
-func AuthenticateUser(context *gin.Context) {
+func AuthenticateUserOptionally(context *gin.Context) {
 	header := dto.AuthHeader{}
 
 	if err := context.ShouldBindHeader(&header); err != nil || header.AuthToken == "" {
-		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "Token de autorização não informado.",
-		})
 		return
 	}
 

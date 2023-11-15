@@ -14,7 +14,7 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		postcontroller.CreatePost(context, db)
 	})
 
-	router.GET("/:id", func(context *gin.Context) {
+	router.GET("/:id", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
 		postcontroller.GetPost(context, db)
 	})
 

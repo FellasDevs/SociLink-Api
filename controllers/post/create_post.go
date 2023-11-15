@@ -4,6 +4,7 @@ import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
 	postrepository "SociLinkApi/repository/post"
+	authtypes "SociLinkApi/types/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,11 +32,19 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	visibility := authtypes.Public
+
+	if postData.Visibility == "private" {
+		visibility = authtypes.Private
+	} else if postData.Visibility == "friends" {
+		visibility = authtypes.Friends
+	}
+
 	post := models.Post{
 		UserID:     uid.(uuid.UUID),
 		Content:    postData.Content,
 		Images:     postData.Images,
-		Visibility: postData.Visibility,
+		Visibility: string(visibility),
 	}
 
 	err := postrepository.CreatePost(&post, db)

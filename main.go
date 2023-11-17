@@ -2,6 +2,7 @@ package main
 
 import (
 	"SociLinkApi/database"
+	"SociLinkApi/middlewares"
 	"SociLinkApi/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -26,6 +27,8 @@ func main() {
 	}
 
 	router := gin.Default()
+
+	router.Use(middlewares.CORSMiddleware())
 
 	routes.SetRoutes(router, db)
 

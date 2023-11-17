@@ -22,6 +22,14 @@ func AuthenticateUser(context *gin.Context) {
 
 	token := strings.Split(header.AuthToken, "Bearer ")
 
+	if len(token) != 2 {
+		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"message": "Token de autorização inválido.",
+		})
+		return
+	}
+
 	claims, err := authservice.ParseAuthToken(token[1])
 	if err != nil {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{

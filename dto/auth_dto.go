@@ -5,9 +5,6 @@ type SignUpRequestDto struct {
 	Name      string
 	Birthdate string
 	Password  string
-	Nickname  string
-	Country   string
-	City      string
 }
 
 type SignInRequestDto struct {

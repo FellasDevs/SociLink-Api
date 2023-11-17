@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
+	"net/mail"
+	"strings"
 	"time"
 )
 
@@ -18,6 +20,35 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),
+		})
+		return
+	}
+
+	var fieldErrors []string
+
+	if len(userInfo.Name) < 6 {
+		fieldErrors = append(fieldErrors, "Nome deve conter no mínimo 6 caracteres.")
+	} else if len(userInfo.Name) > 50 {
+		fieldErrors = append(fieldErrors, "Nome deve conter no máximo 50 caracteres.")
+	}
+	if _, err := mail.ParseAddress(userInfo.Email); err != nil {
+		fieldErrors = append(fieldErrors, "Email inválido.")
+	} else if len(userInfo.Email) > 50 {
+		fieldErrors = append(fieldErrors, "Email deve conter no máximo 50 caracteres.")
+	}
+	if len(userInfo.Password) < 6 {
+		fieldErrors = append(fieldErrors, "Senha deve conter no mínimo 6 caracteres.")
+	} else if len(userInfo.Password) > 50 {
+		fieldErrors = append(fieldErrors, "Senha deve conter no máximo 50 caracteres.")
+	}
+	if userInfo.Birthdate == "" {
+		fieldErrors = append(fieldErrors, "Data de nascimento não informada.")
+	}
+
+	if len(fieldErrors) > 0 {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": strings.Join(fieldErrors, " "),
 		})
 		return
 	}
@@ -45,9 +76,6 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 		Email:     userInfo.Email,
 		Password:  password,
 		Birthdate: birthdate,
-		Nickname:  userInfo.Nickname,
-		Country:   userInfo.Country,
-		City:      userInfo.City,
 	}
 
 	err = userrepository.CreateUser(&user, db)

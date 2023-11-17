@@ -1,5 +1,13 @@
 package dto
 
+type PostResponseDto struct {
+	Id         string
+	User       UserResponseDto
+	Content    string
+	Images     []string
+	Visibility string
+}
+
 type CreatePostRequestDto struct {
 	Content    string
 	Images     []string
@@ -11,16 +19,4 @@ type EditPostRequestDto struct {
 	Content    string
 	Images     []string
 	Visibility string
-}
-
-type GetPostResponseDto struct {
-	Id         string
-	User       UserResponseDto
-	Content    string
-	Images     []string
-	Visibility string
-}
-
-type TimelineResponseDto struct {
-	Posts []GetPostResponseDto
 }

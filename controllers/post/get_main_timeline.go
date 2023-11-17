@@ -43,12 +43,10 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		var response dto.TimelineResponseDto
-
-		response.Posts = make([]dto.GetPostResponseDto, len(posts))
+		response := make([]dto.PostResponseDto, len(posts))
 
 		for i, post := range posts {
-			response.Posts[i] = dto.GetPostResponseDto{
+			response[i] = dto.PostResponseDto{
 				Id: post.ID.String(),
 				User: dto.UserResponseDto{
 					Id:        post.User.ID.String(),
@@ -70,7 +68,7 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 		context.JSON(http.StatusOK, gin.H{
 			"success": true,
 			"message": "posts recuperados com sucesso",
-			"data":    response.Posts,
+			"data":    response,
 		})
 	}
 }

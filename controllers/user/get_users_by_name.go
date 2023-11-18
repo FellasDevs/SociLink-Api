@@ -14,12 +14,12 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 	if search == "" {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "search cannot be empty",
+			"message": "A pesquisa não pode ser vazia",
 		})
 		return
 	}
 
-	if users, err := userrepository.GetUsersByName(search, db); err != nil {
+	if users, err := userrepository.GetUsersByNameOrNickname(search, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

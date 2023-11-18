@@ -12,7 +12,11 @@ type UserResponseDto struct {
 	CreatedAt string
 }
 
-type GetUserResponseDto struct {
+type GetSelfResponseDto struct {
+	User UserResponseDto
+}
+
+type GetUserByIdResponseDto struct {
 	User UserResponseDto
 }
 
@@ -28,4 +32,8 @@ type EditUserInfoRequestDto struct {
 	City      string
 	Picture   string
 	Banner    string
+}
+
+type EditUserInfoResponseDto struct {
+	User UserResponseDto
 }

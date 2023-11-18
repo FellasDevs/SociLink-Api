@@ -104,8 +104,7 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	err := userrepository.UpdateUser(&user, db)
-	if err != nil {
+	if err := userrepository.UpdateUser(&user, db); err != nil {
 		var pgErr *pgconn.PgError
 
 		if errors.As(err, &pgErr) && pgErr.ConstraintName == "users_nickname_key" {
@@ -126,8 +125,23 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	response := dto.EditUserInfoResponseDto{
+		User: dto.UserResponseDto{
+			Id:        user.ID.String(),
+			Name:      user.Name,
+			Nickname:  user.Nickname,
+			Birthdate: user.Birthdate.String(),
+			Country:   user.Country,
+			City:      user.City,
+			Picture:   user.Picture,
+			Banner:    user.Banner,
+			CreatedAt: user.CreatedAt.String(),
+		},
+	}
+
 	context.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "User info updated successfully",
+		"data":    response,
 	})
 }

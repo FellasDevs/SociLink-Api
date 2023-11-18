@@ -32,10 +32,12 @@ func SearchPosts(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		response := make([]dto.PostResponseDto, len(posts))
+		response := dto.SearchPostResponseDto{
+			Posts: make([]dto.PostResponseDto, len(posts)),
+		}
 
 		for i, post := range posts {
-			response[i] = dto.PostResponseDto{
+			response.Posts[i] = dto.PostResponseDto{
 				Id: post.ID.String(),
 				User: dto.UserResponseDto{
 					Id:        post.User.ID.String(),

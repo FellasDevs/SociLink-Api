@@ -2,6 +2,7 @@ package authcontroller
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	userrepository "SociLinkApi/repository/user"
 	authservice "SociLinkApi/services/auth"
 	"errors"
@@ -41,9 +42,8 @@ func SignInController(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	user, err := userrepository.GetUserByEmail(userInfo.Email, db)
-
-	if err != nil {
+	user := models.User{Email: userInfo.Email}
+	if err := userrepository.GetUser(&user, db); err != nil {
 		var statusCode int
 		message := err.Error()
 

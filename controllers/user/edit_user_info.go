@@ -2,6 +2,7 @@ package usercontroller
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	userrepository "SociLinkApi/repository/user"
 	authservice "SociLinkApi/services/auth"
 	"errors"
@@ -18,7 +19,6 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
 
 	var userInfo dto.EditUserInfoRequestDto
-
 	if err := context.ShouldBindJSON(&userInfo); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -27,8 +27,8 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	user, err := userrepository.GetUserById(uid.(uuid.UUID), db)
-	if err != nil {
+	user := models.User{ID: uid.(uuid.UUID)}
+	if err := userrepository.GetUser(&user, db); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),
@@ -104,7 +104,7 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	err = userrepository.UpdateUser(&user, db)
+	err := userrepository.UpdateUser(&user, db)
 	if err != nil {
 		var pgErr *pgconn.PgError
 

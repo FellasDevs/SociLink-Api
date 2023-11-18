@@ -36,7 +36,7 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 
 	var fieldErrors []string
 
-	if userInfo.Name != "" {
+	if userInfo.Name != "" && userInfo.Name != user.Name {
 		if len(userInfo.Name) < 6 {
 			fieldErrors = append(fieldErrors, "Nome deve conter no mínimo 6 caracteres.")
 		} else if len(userInfo.Name) > 50 {
@@ -45,7 +45,7 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 			user.Name = userInfo.Name
 		}
 	}
-	if userInfo.Nickname != "" {
+	if userInfo.Nickname != "" && userInfo.Nickname != user.Nickname {
 		if len(userInfo.Nickname) < 6 {
 			fieldErrors = append(fieldErrors, "Nickname deve conter no mínimo 6 caracteres.")
 		} else if len(userInfo.Nickname) > 50 {
@@ -61,7 +61,7 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 			user.Birthdate = birthdate
 		}
 	}
-	if userInfo.Country != "" {
+	if userInfo.Country != user.Country {
 		if len(userInfo.Country) < 4 {
 			fieldErrors = append(fieldErrors, "País deve conter no mínimo 4 caracteres.")
 		} else if len(userInfo.Country) > 50 {
@@ -70,7 +70,7 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 			user.Country = userInfo.Country
 		}
 	}
-	if userInfo.City != "" {
+	if userInfo.City != user.City {
 		if len(userInfo.City) < 4 {
 			fieldErrors = append(fieldErrors, "Cidade deve conter no mínimo 4 caracteres.")
 		} else if len(userInfo.City) > 50 {
@@ -79,18 +79,18 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 			user.City = userInfo.City
 		}
 	}
-	if userInfo.Picture != "" {
-		if _, err := url.Parse(userInfo.Picture); err != nil {
-			fieldErrors = append(fieldErrors, "URL da foto de perfil inválida.")
-		} else {
+	if userInfo.Picture != user.Picture {
+		if _, err := url.Parse(userInfo.Picture); err == nil || userInfo.Picture == "" {
 			user.Picture = userInfo.Picture
+		} else {
+			fieldErrors = append(fieldErrors, "URL da foto de perfil inválida.")
 		}
 	}
-	if userInfo.Banner != "" {
-		if _, err := url.Parse(userInfo.Banner); err != nil {
-			fieldErrors = append(fieldErrors, "URL do banner de perfil inválida.")
-		} else {
+	if userInfo.Banner != user.Banner {
+		if _, err := url.Parse(userInfo.Banner); err == nil || userInfo.Banner == "" {
 			user.Banner = userInfo.Banner
+		} else {
+			fieldErrors = append(fieldErrors, "URL do banner de perfil inválida.")
 		}
 	}
 

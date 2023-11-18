@@ -5,7 +5,9 @@ import (
 	"SociLinkApi/models"
 	userrepository "SociLinkApi/repository/user"
 	authservice "SociLinkApi/services/auth"
+	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 	"net/http"
 	"net/mail"
@@ -60,7 +62,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 
 	birthdate, err := authservice.ParseBirthdate(userInfo.Birthdate)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
@@ -86,9 +88,31 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 
 	err = userrepository.CreateUser(&user, db)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
+		var pgErr *pgconn.PgError
+
+		if !errors.As(err, &pgErr) {
+			context.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		reason := ""
+
+		switch pgErr.ConstraintName {
+		case "users_email_key":
+			reason = "email"
+		case "users_nickname_key":
+			reason = "nickname"
+		}
+
+		context.JSON(http.StatusConflict, gin.H{
 			"success": false,
 			"message": err.Error(),
+			"data": gin.H{
+				"reason": reason,
+			},
 		})
 		return
 	}

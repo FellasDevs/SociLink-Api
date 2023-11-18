@@ -15,3 +15,11 @@ type FriendshipResponseDto struct {
 	User      UserResponseDto
 	CreatedAt time.Time
 }
+
+type GetFriendsResponseDto struct {
+	Friends []FriendshipResponseDto
+}
+
+type GetFriendshipRequestsResponseDto struct {
+	Requests []FriendshipResponseDto
+}

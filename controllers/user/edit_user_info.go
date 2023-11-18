@@ -4,8 +4,10 @@ import (
 	"SociLinkApi/dto"
 	userrepository "SociLinkApi/repository/user"
 	authservice "SociLinkApi/services/auth"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 	"net/http"
 	"net/url"
@@ -104,16 +106,28 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 
 	err = userrepository.UpdateUser(&user, db)
 	if err != nil {
+		var pgErr *pgconn.PgError
+
+		if errors.As(err, &pgErr) && pgErr.ConstraintName == "users_nickname_key" {
+			context.JSON(http.StatusConflict, gin.H{
+				"success": false,
+				"message": err.Error(),
+				"data": gin.H{
+					"reason": "nickname",
+				},
+			})
+			return
+		}
+
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
 		return
-	} else {
-		context.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"message": "User info updated successfully",
-		})
-		return
 	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "User info updated successfully",
+	})
 }

@@ -1,4 +1,4 @@
-package postcontroller
+package timeline
 
 import (
 	"SociLinkApi/dto"
@@ -43,10 +43,12 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		response := make([]dto.PostResponseDto, len(posts))
+		var response dto.GetMainTimelineResponseDto
+
+		response.Posts = make([]dto.PostResponseDto, len(posts))
 
 		for i, post := range posts {
-			response[i] = dto.PostResponseDto{
+			response.Posts[i] = dto.PostResponseDto{
 				Id: post.ID.String(),
 				User: dto.UserResponseDto{
 					Id:        post.User.ID.String(),

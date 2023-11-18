@@ -2,6 +2,7 @@ package usercontroller
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	userrepository "SociLinkApi/repository/user"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -22,7 +23,8 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if user, err := userrepository.GetUserById(id, db); err != nil {
+	user := models.User{ID: id}
+	if err = userrepository.GetUser(&user, db); err != nil {
 		var statusCode int
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {

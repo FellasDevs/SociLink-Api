@@ -2,6 +2,7 @@ package usercontroller
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	userrepository "SociLinkApi/repository/user"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -11,16 +12,10 @@ import (
 )
 
 func GetSelf(context *gin.Context, db *gorm.DB) {
-	userId, exists := context.Get("userId")
-	if !exists {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "userId not found in context",
-		})
-		return
-	}
+	userId, _ := context.Get("userId")
 
-	if user, err := userrepository.GetUserById(userId.(uuid.UUID), db); err != nil {
+	user := models.User{ID: userId.(uuid.UUID)}
+	if err := userrepository.GetUser(&user, db); err != nil {
 		var statusCode int
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {

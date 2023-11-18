@@ -58,8 +58,7 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 		Visibility: string(visibility),
 	}
 
-	err := postrepository.CreatePost(&post, db)
-	if err != nil {
+	if err := postrepository.CreatePost(&post, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

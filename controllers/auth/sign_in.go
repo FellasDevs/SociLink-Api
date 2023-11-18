@@ -9,6 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -19,6 +20,23 @@ func SignInController(context *gin.Context, db *gorm.DB) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),
+		})
+		return
+	}
+
+	var fieldErrors []string
+
+	if userInfo.Email == "" {
+		fieldErrors = append(fieldErrors, "Email não informado.")
+	}
+	if userInfo.Password == "" {
+		fieldErrors = append(fieldErrors, "Senha não informada.")
+	}
+
+	if len(fieldErrors) > 0 {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": strings.Join(fieldErrors, " "),
 		})
 		return
 	}

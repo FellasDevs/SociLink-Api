@@ -6,6 +6,7 @@ import (
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -23,11 +24,19 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	uid, exists := context.Get("userId")
-	if !exists {
+	var fieldErrors []string
+
+	if postData.Content == "" {
+		fieldErrors = append(fieldErrors, "Conteúdo não pode ser vazio.")
+	}
+	if postData.Visibility != "public" && postData.Visibility != "private" && postData.Visibility != "friends" {
+		fieldErrors = append(fieldErrors, "Visibilidade deve ser public, private ou friends.")
+	}
+
+	if len(fieldErrors) > 0 {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "token de autenticação não encontrado",
+			"message": strings.Join(fieldErrors, " "),
 		})
 		return
 	}
@@ -39,6 +48,8 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 	} else if postData.Visibility == "friends" {
 		visibility = authtypes.Friends
 	}
+
+	uid, _ := context.Get("userId")
 
 	post := models.Post{
 		UserID:     uid.(uuid.UUID),

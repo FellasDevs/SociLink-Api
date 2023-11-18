@@ -4,6 +4,7 @@ import (
 	"SociLinkApi/database"
 	"SociLinkApi/middlewares"
 	"SociLinkApi/routes"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"os"
@@ -12,11 +13,13 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
+		fmt.Println("Erro ao carregar arquivo .env")
 		panic(err)
 	}
 
 	db, err := database.GetDbConnection()
 	if err != nil {
+		fmt.Println("Erro ao conectar com o banco de dados")
 		panic(err)
 	}
 

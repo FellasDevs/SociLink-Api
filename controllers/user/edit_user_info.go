@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 func EditUserInfo(context *gin.Context, db *gorm.DB) {
@@ -32,35 +34,72 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	var fieldErrors []string
+
 	if userInfo.Name != "" {
-		user.Name = userInfo.Name
+		if len(userInfo.Name) < 6 {
+			fieldErrors = append(fieldErrors, "Nome deve conter no mínimo 6 caracteres.")
+		} else if len(userInfo.Name) > 50 {
+			fieldErrors = append(fieldErrors, "Nome deve conter no máximo 50 caracteres.")
+		} else {
+			user.Name = userInfo.Name
+		}
 	}
 	if userInfo.Nickname != "" {
-		user.Nickname = userInfo.Nickname
+		if len(userInfo.Nickname) < 6 {
+			fieldErrors = append(fieldErrors, "Nickname deve conter no mínimo 6 caracteres.")
+		} else if len(userInfo.Nickname) > 50 {
+			fieldErrors = append(fieldErrors, "Nickname deve conter no máximo 50 caracteres.")
+		} else {
+			user.Nickname = userInfo.Nickname
+		}
 	}
 	if userInfo.Birthdate != "" {
-		birthdate, err := authservice.ParseBirthdate(userInfo.Birthdate)
-		if err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{
-				"success": false,
-				"message": err.Error(),
-			})
-			return
+		if birthdate, err := authservice.ParseBirthdate(userInfo.Birthdate); err != nil {
+			fieldErrors = append(fieldErrors, "Data de nascimento inválida.")
+		} else {
+			user.Birthdate = birthdate
 		}
-
-		user.Birthdate = birthdate
 	}
 	if userInfo.Country != "" {
-		user.Country = userInfo.Country
+		if len(userInfo.Country) < 4 {
+			fieldErrors = append(fieldErrors, "País deve conter no mínimo 4 caracteres.")
+		} else if len(userInfo.Country) > 50 {
+			fieldErrors = append(fieldErrors, "País deve conter no máximo 50 caracteres.")
+		} else {
+			user.Country = userInfo.Country
+		}
 	}
 	if userInfo.City != "" {
-		user.City = userInfo.City
+		if len(userInfo.City) < 4 {
+			fieldErrors = append(fieldErrors, "Cidade deve conter no mínimo 4 caracteres.")
+		} else if len(userInfo.City) > 50 {
+			fieldErrors = append(fieldErrors, "Cidade deve conter no máximo 50 caracteres.")
+		} else {
+			user.City = userInfo.City
+		}
 	}
 	if userInfo.Picture != "" {
-		user.Picture = userInfo.Picture
+		if _, err := url.Parse(userInfo.Picture); err != nil {
+			fieldErrors = append(fieldErrors, "URL da foto de perfil inválida.")
+		} else {
+			user.Picture = userInfo.Picture
+		}
 	}
 	if userInfo.Banner != "" {
-		user.Banner = userInfo.Banner
+		if _, err := url.Parse(userInfo.Banner); err != nil {
+			fieldErrors = append(fieldErrors, "URL do banner de perfil inválida.")
+		} else {
+			user.Banner = userInfo.Banner
+		}
+	}
+
+	if len(fieldErrors) > 0 {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": strings.Join(fieldErrors, " "),
+		})
+		return
 	}
 
 	err = userrepository.UpdateUser(&user, db)

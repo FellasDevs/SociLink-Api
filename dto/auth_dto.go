@@ -3,6 +3,7 @@ package dto
 type SignUpRequestDto struct {
 	Email     string
 	Name      string
+	Nickname  string
 	Birthdate string
 	Password  string
 }

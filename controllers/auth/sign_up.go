@@ -31,6 +31,11 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 	} else if len(userInfo.Name) > 50 {
 		fieldErrors = append(fieldErrors, "Nome deve conter no máximo 50 caracteres.")
 	}
+	if len(userInfo.Nickname) < 6 {
+		fieldErrors = append(fieldErrors, "Nickname deve conter no mínimo 6 caracteres.")
+	} else if len(userInfo.Nickname) > 50 {
+		fieldErrors = append(fieldErrors, "Nickname deve conter no máximo 50 caracteres.")
+	}
 	if _, err := mail.ParseAddress(userInfo.Email); err != nil {
 		fieldErrors = append(fieldErrors, "Email inválido.")
 	} else if len(userInfo.Email) > 50 {
@@ -73,6 +78,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 
 	user := models.User{
 		Name:      userInfo.Name,
+		Nickname:  userInfo.Nickname,
 		Email:     userInfo.Email,
 		Password:  password,
 		Birthdate: birthdate,

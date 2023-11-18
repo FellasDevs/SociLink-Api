@@ -12,7 +12,7 @@ type UserResponseDto struct {
 	CreatedAt string
 }
 
-type GetUserByIdResponseDto struct {
+type GetUserResponseDto struct {
 	User UserResponseDto
 }
 

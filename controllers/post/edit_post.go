@@ -2,6 +2,7 @@ package postcontroller
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"net/http"
@@ -31,8 +32,8 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	post, err := postrepository.GetPost(postId, db)
-	if err != nil {
+	post := models.Post{ID: postId}
+	if err = postrepository.GetPost(&post, db); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),

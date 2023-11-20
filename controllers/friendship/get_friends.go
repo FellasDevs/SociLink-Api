@@ -19,7 +19,9 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		response := make([]dto.FriendshipResponseDto, len(friendships))
+		response := dto.GetFriendsResponseDto{
+			Friends: make([]dto.FriendshipResponseDto, len(friendships)),
+		}
 
 		for i, friendship := range friendships {
 			user := friendship.User
@@ -27,7 +29,7 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 				user = friendship.Friend
 			}
 
-			response[i] = dto.FriendshipResponseDto{
+			response.Friends[i] = dto.FriendshipResponseDto{
 				Id: friendship.ID,
 				User: dto.UserResponseDto{
 					Id:        user.ID.String(),

@@ -8,7 +8,7 @@ import (
 )
 
 func CreatePost(post *models.Post, db *gorm.DB) error {
-	result := db.Clauses(clause.Returning{}).Create(&post)
+	result := db.Preload(clause.Associations).Clauses(clause.Returning{}).Create(&post)
 
 	return result.Error
 }

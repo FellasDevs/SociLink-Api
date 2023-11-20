@@ -1,6 +1,7 @@
 package postcontroller
 
 import (
+	"SociLinkApi/models"
 	postrepository "SociLinkApi/repository/post"
 	"net/http"
 
@@ -21,8 +22,8 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	post, err := postrepository.GetPost(postID, db)
-	if err != nil {
+	post := models.Post{ID: postID}
+	if err = postrepository.GetPost(&post, db); err != nil {
 		context.JSON(http.StatusNotFound, gin.H{
 			"success": false,
 			"message": err.Error(),

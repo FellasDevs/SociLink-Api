@@ -58,8 +58,7 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 		Visibility: string(visibility),
 	}
 
-	err := postrepository.CreatePost(&post, db)
-	if err != nil {
+	if err := postrepository.CreatePost(&post, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
@@ -67,8 +66,29 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	response := dto.CreatePostResponseDto{
+		Post: dto.PostResponseDto{
+			Id: post.ID.String(),
+			User: dto.UserResponseDto{
+				Id:        post.User.ID.String(),
+				Name:      post.User.Name,
+				Nickname:  post.User.Nickname,
+				Birthdate: post.User.Birthdate.String(),
+				Country:   post.User.Country,
+				City:      post.User.City,
+				Picture:   post.User.Picture,
+				Banner:    post.User.Banner,
+				CreatedAt: post.User.CreatedAt.String(),
+			},
+			Content:    post.Content,
+			Images:     post.Images,
+			Visibility: post.Visibility,
+		},
+	}
+
 	context.JSON(http.StatusCreated, gin.H{
 		"success": true,
 		"message": "Post criado com sucesso!",
+		"data":    response,
 	})
 }

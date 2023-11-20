@@ -1,10 +1,13 @@
-package postcontroller
+package timeline
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	frienshiprepository "SociLinkApi/repository/frienship"
 	postrepository "SociLinkApi/repository/post"
+	userrepository "SociLinkApi/repository/user"
 	authtypes "SociLinkApi/types/auth"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -12,11 +15,19 @@ import (
 )
 
 func GetUserTimeline(context *gin.Context, db *gorm.DB) {
-	paramId := context.Param("id")
+	nickname := context.Param("nick")
 
-	paramUserId, err := uuid.Parse(paramId)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{
+	user := models.User{Nickname: nickname}
+	if err := userrepository.GetUser(&user, db); err != nil {
+		var statusCode int
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			statusCode = http.StatusNotFound
+		} else {
+			statusCode = http.StatusInternalServerError
+		}
+
+		context.JSON(statusCode, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
@@ -29,23 +40,37 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 	if exists {
 		userId := uid.(uuid.UUID)
 
-		if userId == paramUserId {
+		if userId == user.ID {
 			visibility = authtypes.Private
-		} else if _, err := frienshiprepository.GetFriendshipByUsers(userId, paramUserId, db); err == nil {
+		} else if _, err := frienshiprepository.GetFriendshipByUsers(userId, user.ID, db); err == nil {
 			visibility = authtypes.Friends
 		}
 	}
 
-	if posts, err := postrepository.GetPostsByUser(paramUserId, visibility, db); err != nil {
+	if posts, err := postrepository.GetPostsByUser(user.ID, visibility, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
 	} else {
-		response := make([]dto.PostResponseDto, len(posts))
+		var response dto.GetUserTimelineResponseDto
+
+		response.User = dto.UserResponseDto{
+			Id:        user.ID.String(),
+			Name:      user.Name,
+			Nickname:  user.Nickname,
+			Birthdate: user.Birthdate.String(),
+			Country:   user.Country,
+			City:      user.City,
+			Picture:   user.Picture,
+			Banner:    user.Banner,
+			CreatedAt: user.CreatedAt.String(),
+		}
+
+		response.Posts = make([]dto.PostResponseDto, len(posts))
 
 		for i, post := range posts {
-			response[i] = dto.PostResponseDto{
+			response.Posts[i] = dto.PostResponseDto{
 				Id: post.ID.String(),
 				User: dto.UserResponseDto{
 					Id:        post.User.ID.String(),

@@ -28,8 +28,11 @@ func GetSelf(context *gin.Context, db *gorm.DB) {
 			"success": false,
 			"message": err.Error(),
 		})
-	} else {
-		response := dto.GetUserByIdResponseDto{User: dto.UserResponseDto{
+		return
+	}
+
+	response := dto.GetSelfResponseDto{
+		User: dto.UserResponseDto{
 			Id:        user.ID.String(),
 			Name:      user.Name,
 			Nickname:  user.Nickname,
@@ -39,12 +42,12 @@ func GetSelf(context *gin.Context, db *gorm.DB) {
 			Picture:   user.Picture,
 			Banner:    user.Banner,
 			CreatedAt: user.CreatedAt.String(),
-		}}
-
-		context.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"message": "usuário obtido com sucesso",
-			"data":    response,
-		})
+		},
 	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "usuário obtido com sucesso",
+		"data":    response,
+	})
 }

@@ -2,6 +2,7 @@ package postcontroller
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"net/http"
@@ -31,8 +32,8 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	post, err := postrepository.GetPost(postId, db)
-	if err != nil {
+	post := models.Post{ID: postId}
+	if err = postrepository.GetPost(&post, db); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),
@@ -58,6 +59,14 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		post.Content = postData.Content
 	}
 	if postData.Visibility != "" {
+		if postData.Visibility != "public" && postData.Visibility != "private" && postData.Visibility != "friends" {
+			context.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"message": "Visibilidade deve ser public, private ou friends.",
+			})
+			return
+		}
+
 		visibility := authtypes.Public
 
 		if postData.Visibility == "private" {
@@ -78,8 +87,29 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	response := dto.CreatePostResponseDto{
+		Post: dto.PostResponseDto{
+			Id: post.ID.String(),
+			User: dto.UserResponseDto{
+				Id:        post.User.ID.String(),
+				Name:      post.User.Name,
+				Nickname:  post.User.Nickname,
+				Birthdate: post.User.Birthdate.String(),
+				Country:   post.User.Country,
+				City:      post.User.City,
+				Picture:   post.User.Picture,
+				Banner:    post.User.Banner,
+				CreatedAt: post.User.CreatedAt.String(),
+			},
+			Content:    post.Content,
+			Images:     post.Images,
+			Visibility: post.Visibility,
+		},
+	}
+
 	context.JSON(http.StatusOK, gin.H{
 		"success": true,
 		"message": "Post editado com sucesso!",
+		"data":    response,
 	})
 }

@@ -19,6 +19,10 @@ type GetFriendsResponseDto struct {
 	Friends []FriendshipResponseDto
 }
 
+type GetFriendshipResponseDto struct {
+	Friendship FriendshipResponseDto
+}
+
 type GetFriendshipRequestsResponseDto struct {
 	Requests []FriendshipResponseDto
 }

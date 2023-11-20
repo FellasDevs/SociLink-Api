@@ -7,7 +7,7 @@ import (
 )
 
 func GetUser(user *models.User, db *gorm.DB) error {
-	result := db.Preload(clause.Associations).First(&user)
+	result := db.Preload(clause.Associations).Where(&user).First(&user)
 
 	return result.Error
 }

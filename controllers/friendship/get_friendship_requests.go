@@ -24,7 +24,7 @@ func GetAllFriendshipRequests(context *gin.Context, db *gorm.DB) {
 
 		for i, request := range requests {
 			response.Requests[i] = dto.FriendshipResponseDto{
-				Id: request.ID,
+				Id: request.ID.String(),
 				Friend: dto.UserResponseDto{
 					Id:        request.User.ID.String(),
 					Name:      request.User.Name,

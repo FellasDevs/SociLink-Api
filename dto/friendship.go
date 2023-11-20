@@ -12,7 +12,7 @@ type AnswerFriendshipRequestDto struct {
 
 type FriendshipResponseDto struct {
 	Id        uuid.UUID
-	User      UserResponseDto
+	Friend    UserResponseDto
 	CreatedAt time.Time
 }
 

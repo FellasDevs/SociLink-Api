@@ -41,17 +41,7 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.GetUserByIdResponseDto{
-		User: dto.UserResponseDto{
-			Id:        user.ID.String(),
-			Name:      user.Name,
-			Birthdate: user.Birthdate.String(),
-			Nickname:  user.Nickname,
-			Country:   user.Country,
-			City:      user.City,
-			Picture:   user.Picture,
-			Banner:    user.Banner,
-			CreatedAt: user.CreatedAt.String(),
-		},
+		User: dto.UserToUserResponseDto(user),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

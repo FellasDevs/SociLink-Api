@@ -32,17 +32,7 @@ func GetSelf(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.GetSelfResponseDto{
-		User: dto.UserResponseDto{
-			Id:        user.ID.String(),
-			Name:      user.Name,
-			Nickname:  user.Nickname,
-			Birthdate: user.Birthdate.String(),
-			Country:   user.Country,
-			City:      user.City,
-			Picture:   user.Picture,
-			Banner:    user.Banner,
-			CreatedAt: user.CreatedAt.String(),
-		},
+		User: dto.UserToUserResponseDto(user),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

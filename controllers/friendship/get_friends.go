@@ -24,27 +24,11 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 		}
 
 		for i, friendship := range friendships {
-			user := friendship.User
-			if friendship.UserID == userId {
-				user = friendship.Friend
+			if friendship.FriendID == userId {
+				friendship.Friend = friendship.User
 			}
 
-			response.Friends[i] = dto.FriendshipResponseDto{
-				Id:       friendship.ID.String(),
-				Accepted: friendship.Accepted,
-				Friend: dto.UserResponseDto{
-					Id:        user.ID.String(),
-					Name:      user.Name,
-					Birthdate: user.Birthdate.String(),
-					Nickname:  user.Nickname,
-					Country:   user.Country,
-					City:      user.City,
-					Picture:   user.Picture,
-					Banner:    user.Banner,
-					CreatedAt: user.CreatedAt.String(),
-				},
-				CreatedAt: friendship.CreatedAt,
-			}
+			response.Friends[i] = dto.FriendshipToFriendshipResponseDto(friendship)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

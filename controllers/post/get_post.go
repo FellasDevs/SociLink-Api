@@ -63,23 +63,7 @@ func GetPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	response := dto.PostResponseDto{
-		Id: post.ID.String(),
-		User: dto.UserResponseDto{
-			Id:        post.User.ID.String(),
-			Name:      post.User.Name,
-			Birthdate: post.User.Birthdate.String(),
-			Nickname:  post.User.Nickname,
-			Country:   post.User.Country,
-			City:      post.User.City,
-			Picture:   post.User.Picture,
-			Banner:    post.User.Banner,
-			CreatedAt: post.User.CreatedAt.String(),
-		},
-		Content:    post.Content,
-		Visibility: post.Visibility,
-		Images:     post.Images,
-	}
+	response := dto.PostToPostResponseDto(post)
 
 	context.JSON(http.StatusOK, gin.H{
 		"success": true,

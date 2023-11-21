@@ -58,22 +58,7 @@ func GetFriendship(context *gin.Context, db *gorm.DB) {
 		})
 	} else {
 		response := dto.GetFriendshipResponseDto{
-			Friendship: dto.FriendshipResponseDto{
-				Id:       friendship.ID.String(),
-				Accepted: friendship.Accepted,
-				Friend: dto.UserResponseDto{
-					Id:        friendship.Friend.ID.String(),
-					Name:      friendship.Friend.Name,
-					Nickname:  friendship.Friend.Nickname,
-					Birthdate: friendship.Friend.Birthdate.String(),
-					Country:   friendship.Friend.Country,
-					City:      friendship.Friend.City,
-					Picture:   friendship.Friend.Picture,
-					Banner:    friendship.Friend.Banner,
-					CreatedAt: friendship.Friend.CreatedAt.String(),
-				},
-				CreatedAt: friendship.CreatedAt,
-			},
+			Friendship: dto.FriendshipToFriendshipResponseDto(friendship),
 		}
 
 		context.JSON(http.StatusOK, gin.H{

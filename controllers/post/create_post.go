@@ -67,23 +67,7 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.CreatePostResponseDto{
-		Post: dto.PostResponseDto{
-			Id: post.ID.String(),
-			User: dto.UserResponseDto{
-				Id:        post.User.ID.String(),
-				Name:      post.User.Name,
-				Nickname:  post.User.Nickname,
-				Birthdate: post.User.Birthdate.String(),
-				Country:   post.User.Country,
-				City:      post.User.City,
-				Picture:   post.User.Picture,
-				Banner:    post.User.Banner,
-				CreatedAt: post.User.CreatedAt.String(),
-			},
-			Content:    post.Content,
-			Images:     post.Images,
-			Visibility: post.Visibility,
-		},
+		Post: dto.PostToPostResponseDto(post),
 	}
 
 	context.JSON(http.StatusCreated, gin.H{

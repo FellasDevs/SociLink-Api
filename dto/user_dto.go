@@ -1,15 +1,20 @@
 package dto
 
+import (
+	"SociLinkApi/models"
+	"time"
+)
+
 type UserResponseDto struct {
 	Id        string
 	Name      string
 	Nickname  string
-	Birthdate string
+	Birthdate time.Time
 	Country   string
 	City      string
 	Picture   string
 	Banner    string
-	CreatedAt string
+	CreatedAt time.Time
 }
 
 type GetSelfResponseDto struct {
@@ -36,4 +41,18 @@ type EditUserInfoRequestDto struct {
 
 type EditUserInfoResponseDto struct {
 	User UserResponseDto
+}
+
+func UserToUserResponseDto(user models.User) UserResponseDto {
+	return UserResponseDto{
+		Id:        user.ID.String(),
+		Name:      user.Name,
+		Nickname:  user.Nickname,
+		Birthdate: user.Birthdate,
+		Country:   user.Country,
+		City:      user.City,
+		Picture:   user.Picture,
+		Banner:    user.Banner,
+		CreatedAt: user.CreatedAt,
+	}
 }

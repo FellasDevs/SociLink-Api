@@ -55,38 +55,12 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 	} else {
 		var response dto.GetUserTimelineResponseDto
 
-		response.User = dto.UserResponseDto{
-			Id:        user.ID.String(),
-			Name:      user.Name,
-			Nickname:  user.Nickname,
-			Birthdate: user.Birthdate.String(),
-			Country:   user.Country,
-			City:      user.City,
-			Picture:   user.Picture,
-			Banner:    user.Banner,
-			CreatedAt: user.CreatedAt.String(),
-		}
+		response.User = dto.UserToUserResponseDto(user)
 
 		response.Posts = make([]dto.PostResponseDto, len(posts))
 
 		for i, post := range posts {
-			response.Posts[i] = dto.PostResponseDto{
-				Id: post.ID.String(),
-				User: dto.UserResponseDto{
-					Id:        post.User.ID.String(),
-					Name:      post.User.Name,
-					Nickname:  post.User.Nickname,
-					Birthdate: post.User.Birthdate.String(),
-					Country:   post.User.Country,
-					City:      post.User.City,
-					Picture:   post.User.Picture,
-					Banner:    post.User.Banner,
-					CreatedAt: post.User.CreatedAt.String(),
-				},
-				Content:    post.Content,
-				Images:     post.Images,
-				Visibility: post.Visibility,
-			}
+			response.Posts[i] = dto.PostToPostResponseDto(post)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

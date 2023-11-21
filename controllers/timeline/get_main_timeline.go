@@ -48,23 +48,7 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 		response.Posts = make([]dto.PostResponseDto, len(posts))
 
 		for i, post := range posts {
-			response.Posts[i] = dto.PostResponseDto{
-				Id: post.ID.String(),
-				User: dto.UserResponseDto{
-					Id:        post.User.ID.String(),
-					Name:      post.User.Name,
-					Nickname:  post.User.Nickname,
-					Birthdate: post.User.Birthdate.String(),
-					Country:   post.User.Country,
-					City:      post.User.City,
-					Picture:   post.User.Picture,
-					Banner:    post.User.Banner,
-					CreatedAt: post.User.CreatedAt.String(),
-				},
-				Content:    post.Content,
-				Images:     post.Images,
-				Visibility: post.Visibility,
-			}
+			response.Posts[i] = dto.PostToPostResponseDto(post)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

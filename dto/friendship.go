@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"SociLinkApi/models"
 	"time"
 )
 
@@ -26,4 +27,13 @@ type GetFriendshipResponseDto struct {
 
 type GetFriendshipRequestsResponseDto struct {
 	Requests []FriendshipResponseDto
+}
+
+func FriendshipToFriendshipResponseDto(friendship models.Friendship) FriendshipResponseDto {
+	return FriendshipResponseDto{
+		Id:        friendship.ID.String(),
+		Friend:    UserToUserResponseDto(friendship.Friend),
+		Accepted:  friendship.Accepted,
+		CreatedAt: friendship.CreatedAt,
+	}
 }

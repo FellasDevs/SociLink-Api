@@ -23,22 +23,9 @@ func GetAllFriendshipRequests(context *gin.Context, db *gorm.DB) {
 		}
 
 		for i, request := range requests {
-			response.Requests[i] = dto.FriendshipResponseDto{
-				Id:       request.ID.String(),
-				Accepted: request.Accepted,
-				Friend: dto.UserResponseDto{
-					Id:        request.User.ID.String(),
-					Name:      request.User.Name,
-					Birthdate: request.User.Birthdate.String(),
-					Nickname:  request.User.Nickname,
-					Country:   request.User.Country,
-					City:      request.User.City,
-					Picture:   request.User.Picture,
-					Banner:    request.User.Banner,
-					CreatedAt: request.User.CreatedAt.String(),
-				},
-				CreatedAt: request.CreatedAt,
-			}
+			request.Friend = request.User
+
+			response.Requests[i] = dto.FriendshipToFriendshipResponseDto(request)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

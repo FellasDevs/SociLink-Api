@@ -1,6 +1,9 @@
 package dto
 
-import "SociLinkApi/models"
+import (
+	"SociLinkApi/models"
+	"time"
+)
 
 type PostResponseDto struct {
 	Id         string
@@ -8,6 +11,7 @@ type PostResponseDto struct {
 	Content    string
 	Images     []string
 	Visibility string
+	CreatedAt  time.Time
 }
 
 type CreatePostRequestDto struct {
@@ -42,5 +46,6 @@ func PostToPostResponseDto(post models.Post) PostResponseDto {
 		Content:    post.Content,
 		Images:     post.Images,
 		Visibility: post.Visibility,
+		CreatedAt:  post.CreatedAt,
 	}
 }

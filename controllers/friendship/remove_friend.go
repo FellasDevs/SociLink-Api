@@ -38,7 +38,7 @@ func RemoveFriend(context *gin.Context, db *gorm.DB) {
 		})
 	}
 
-	if userId != friendship.UserID && userId != friendship.FriendID {
+	if userId != friendship.UserID && (userId != friendship.FriendID || friendship.Pending) {
 		context.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
 			"message": "Você não tem permissão para remover esta amizade",

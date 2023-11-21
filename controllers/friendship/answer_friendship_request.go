@@ -2,6 +2,7 @@ package friendshipcontroller
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	frienshiprepository "SociLinkApi/repository/frienship"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -10,14 +11,8 @@ import (
 )
 
 func AnswerFriendshipRequest(context *gin.Context, db *gorm.DB) {
-	uid, exists := context.Get("userId")
-	if !exists {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "Erro ao obter id do usuário",
-		})
-		return
-	}
+	uid, _ := context.Get("userId")
+	userId := uid.(uuid.UUID)
 
 	var params dto.AnswerFriendshipRequestDto
 	if err := context.ShouldBindJSON(&params); err != nil {
@@ -37,8 +32,8 @@ func AnswerFriendshipRequest(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	friendship, err := frienshiprepository.GetFriendshipRequestById(requestId, db)
-	if err != nil {
+	friendship := models.Friendship{ID: requestId}
+	if err = frienshiprepository.GetFriendship(&friendship, db); err != nil {
 		var statusCode int
 
 		if err.Error() == "record not found" {
@@ -53,7 +48,7 @@ func AnswerFriendshipRequest(context *gin.Context, db *gorm.DB) {
 		})
 	}
 
-	if friendship.FriendID != uid.(uuid.UUID) {
+	if friendship.FriendID != userId {
 		context.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
 			"message": "Você não tem permissão para responder a este pedido de amizade",
@@ -61,10 +56,10 @@ func AnswerFriendshipRequest(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if friendship.Pending == false {
+	if !friendship.Pending && friendship.Accepted {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "Este pedido de amizade já foi respondido",
+			"message": "Este pedido de amizade já foi aceito",
 		})
 		return
 	}

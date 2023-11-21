@@ -1,6 +1,7 @@
 package friendshipcontroller
 
 import (
+	"SociLinkApi/models"
 	frienshiprepository "SociLinkApi/repository/frienship"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -9,26 +10,20 @@ import (
 )
 
 func RemoveFriend(context *gin.Context, db *gorm.DB) {
-	uid, exists := context.Get("userId")
-	if !exists {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "Erro ao obter id do usuário",
-		})
-		return
-	}
+	uid, _ := context.Get("userId")
+	userId := uid.(uuid.UUID)
 
 	friendshipId, err := uuid.Parse(context.Param("id"))
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "id do amigo não informado",
+			"message": "id da amizade não informado",
 		})
 		return
 	}
 
-	friendship, err := frienshiprepository.GetFriendshipRequestById(friendshipId, db)
-	if err != nil {
+	friendship := models.Friendship{ID: friendshipId}
+	if err = frienshiprepository.GetFriendship(&friendship, db); err != nil {
 		var statusCode int
 
 		if err.Error() == "record not found" {
@@ -43,7 +38,7 @@ func RemoveFriend(context *gin.Context, db *gorm.DB) {
 		})
 	}
 
-	if uid.(uuid.UUID) != friendship.UserID && uid.(uuid.UUID) != friendship.FriendID {
+	if userId != friendship.UserID && (userId != friendship.FriendID || friendship.Pending) {
 		context.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
 			"message": "Você não tem permissão para remover esta amizade",
@@ -51,7 +46,7 @@ func RemoveFriend(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if err := frienshiprepository.DeleteFriendship(friendshipId, db); err != nil {
+	if err = frienshiprepository.DeleteFriendship(&friendship, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

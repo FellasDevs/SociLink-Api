@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
@@ -11,13 +10,18 @@ type AnswerFriendshipRequestDto struct {
 }
 
 type FriendshipResponseDto struct {
-	Id        uuid.UUID
-	User      UserResponseDto
+	Id        string
+	Friend    UserResponseDto
+	Accepted  bool
 	CreatedAt time.Time
 }
 
 type GetFriendsResponseDto struct {
 	Friends []FriendshipResponseDto
+}
+
+type GetFriendshipResponseDto struct {
+	Friendship FriendshipResponseDto
 }
 
 type GetFriendshipRequestsResponseDto struct {

@@ -14,6 +14,10 @@ func ParseAuthToken(jwtString string) (*authtypes.CustomJWTClaims, error) {
 
 	token, err := jwt.ParseWithClaims(jwtString, &authtypes.CustomJWTClaims{}, keyFunc)
 
+	if err != nil {
+		return nil, err
+	}
+
 	claims, ok := token.Claims.(*authtypes.CustomJWTClaims)
 
 	if err != nil {

@@ -2,6 +2,7 @@ package friendshipcontroller
 
 import (
 	userrepository "SociLinkApi/repository/frienship"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -9,14 +10,8 @@ import (
 )
 
 func RequestFriendship(context *gin.Context, db *gorm.DB) {
-	uid, exists := context.Get("userId")
-	if !exists {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "Erro ao obter id do usuário",
-		})
-		return
-	}
+	uid, _ := context.Get("userId")
+	userId := uid.(uuid.UUID)
 
 	friendId, err := uuid.Parse(context.Param("id"))
 	if err != nil {
@@ -27,7 +22,7 @@ func RequestFriendship(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if uid.(uuid.UUID) == friendId {
+	if userId == friendId {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": "Você não pode enviar uma solicitação de amizade a si mesmo",
@@ -35,7 +30,31 @@ func RequestFriendship(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if err := userrepository.CreateFriendshipRequest(uid.(uuid.UUID), friendId, db); err != nil {
+	if friendship, err := userrepository.GetFriendshipByUsers(userId, friendId, db); err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			context.JSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"message": err.Error(),
+			})
+			return
+		}
+	} else {
+		message := "Essa pessoa já enviou uma solicitação de amizade para você"
+
+		if friendship.Accepted {
+			message = "Você já é amigo desta pessoa"
+		} else if friendship.UserID == userId {
+			message = "Você já enviou uma solicitação de amizade para esta pessoa"
+		}
+
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": message,
+		})
+		return
+	}
+
+	if err = userrepository.CreateFriendshipRequest(userId, friendId, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

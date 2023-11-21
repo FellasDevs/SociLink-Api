@@ -34,7 +34,7 @@ func AuthenticateUser(context *gin.Context) {
 	if err != nil {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"success": false,
-			"message": err.Error(),
+			"message": "Token de autorização inválido.",
 		})
 		return
 	}

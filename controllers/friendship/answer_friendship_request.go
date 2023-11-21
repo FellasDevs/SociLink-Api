@@ -2,6 +2,7 @@ package friendshipcontroller
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	frienshiprepository "SociLinkApi/repository/frienship"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -37,8 +38,8 @@ func AnswerFriendshipRequest(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	friendship, err := frienshiprepository.GetFriendshipRequestById(requestId, db)
-	if err != nil {
+	friendship := models.Friendship{ID: requestId}
+	if err = frienshiprepository.GetFriendship(&friendship, db); err != nil {
 		var statusCode int
 
 		if err.Error() == "record not found" {

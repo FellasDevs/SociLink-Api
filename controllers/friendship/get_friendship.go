@@ -59,7 +59,8 @@ func GetFriendship(context *gin.Context, db *gorm.DB) {
 	} else {
 		response := dto.GetFriendshipResponseDto{
 			Friendship: dto.FriendshipResponseDto{
-				Id: friendship.ID.String(),
+				Id:       friendship.ID.String(),
+				Accepted: friendship.Accepted,
 				Friend: dto.UserResponseDto{
 					Id:        friend.ID.String(),
 					Name:      friend.Name,

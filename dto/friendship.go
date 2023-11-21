@@ -12,6 +12,7 @@ type AnswerFriendshipRequestDto struct {
 type FriendshipResponseDto struct {
 	Id        string
 	Friend    UserResponseDto
+	Accepted  bool
 	CreatedAt time.Time
 }
 

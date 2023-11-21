@@ -30,7 +30,8 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 			}
 
 			response.Friends[i] = dto.FriendshipResponseDto{
-				Id: friendship.ID.String(),
+				Id:       friendship.ID.String(),
+				Accepted: friendship.Accepted,
 				Friend: dto.UserResponseDto{
 					Id:        user.ID.String(),
 					Name:      user.Name,

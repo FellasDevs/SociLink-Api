@@ -18,6 +18,10 @@ func AuthenticateUserOptionally(context *gin.Context) {
 
 	token := strings.Split(header.AuthToken, "Bearer ")
 
+	if len(token) != 2 {
+		return
+	}
+
 	claims, err := authservice.ParseAuthToken(token[1])
 	if err != nil {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{

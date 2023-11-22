@@ -1,13 +1,15 @@
 package postrepository
 
 import (
+	"SociLinkApi/dto"
 	"SociLinkApi/models"
 	authtypes "SociLinkApi/types/auth"
+	"SociLinkApi/utils"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func SearchPosts(search string, userId *uuid.UUID, db *gorm.DB) ([]models.Post, error) {
+func SearchPosts(search string, userId *uuid.UUID, pagination dto.PaginationRequestDto, db *gorm.DB) ([]models.Post, error) {
 	var posts []models.Post
 
 	query := db.Preload("User")
@@ -22,6 +24,8 @@ func SearchPosts(search string, userId *uuid.UUID, db *gorm.DB) ([]models.Post, 
 		query = query.Or("(visibility = ? OR visibility = ?) AND posts.user_id = ?", authtypes.Private, authtypes.Friends, userId)
 		query = query.Or("visibility = ? AND EXISTS(SELECT * FROM friendships WHERE ((friendships.user_id = ? AND friendships.friend_id = posts.user_id) OR (friendships.friend_id = ? AND friendships.user_id = posts.user_id)) LIMIT 1)", authtypes.Friends, userId, userId)
 	}
+
+	utils.UsePagination(query, pagination)
 
 	result := query.Order("created_at desc").Find(&posts)
 

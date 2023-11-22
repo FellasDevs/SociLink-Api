@@ -15,7 +15,16 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
 	userId := uid.(uuid.UUID)
 
-	friends, err := frienshiprepository.GetFriendships(userId, db)
+	var pagination dto.PaginationRequestDto
+	if err := context.ShouldBindQuery(&pagination); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	friends, err := frienshiprepository.GetFriendships(userId, pagination, db)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -37,7 +46,7 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 		userIds[i+1] = id
 	}
 
-	if posts, err := postrepository.GetPostsByUsers(userIds, authtypes.Friends, db); err != nil {
+	if posts, err := postrepository.GetPostsByUsers(userIds, authtypes.Friends, pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

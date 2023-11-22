@@ -17,6 +17,15 @@ import (
 func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 	nickname := context.Param("nick")
 
+	var pagination dto.PaginationRequestDto
+	if err := context.ShouldBindQuery(&pagination); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	user := models.User{Nickname: nickname}
 	if err := userrepository.GetUser(&user, db); err != nil {
 		var statusCode int
@@ -47,7 +56,7 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 		}
 	}
 
-	if posts, err := postrepository.GetPostsByUser(user.ID, visibility, db); err != nil {
+	if posts, err := postrepository.GetPostsByUser(user.ID, visibility, pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

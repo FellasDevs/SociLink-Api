@@ -12,7 +12,16 @@ import (
 func GetAllFriendshipRequests(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
 
-	if requests, err := frienshiprepository.GetFriendshipRequests(uid.(uuid.UUID), db); err != nil {
+	var pagination dto.PaginationRequestDto
+	if err := context.ShouldBindQuery(&pagination); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if requests, err := frienshiprepository.GetFriendshipRequests(uid.(uuid.UUID), pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

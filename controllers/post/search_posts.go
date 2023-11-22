@@ -26,7 +26,16 @@ func SearchPosts(context *gin.Context, db *gorm.DB) {
 		userId = &id
 	}
 
-	if posts, err := postrepository.SearchPosts(search, userId, db); err != nil {
+	var pagination dto.PaginationRequestDto
+	if err := context.ShouldBindQuery(&pagination); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if posts, err := postrepository.SearchPosts(search, userId, pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

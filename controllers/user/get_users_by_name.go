@@ -19,7 +19,16 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if users, err := userrepository.GetUsersByNameOrNickname(search, db); err != nil {
+	var pagination dto.PaginationRequestDto
+	if err := context.ShouldBindQuery(&pagination); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if users, err := userrepository.GetUsersByNameOrNickname(search, pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

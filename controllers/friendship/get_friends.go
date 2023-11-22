@@ -13,7 +13,16 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
 	userId := uid.(uuid.UUID)
 
-	if friendships, err := frienshiprepository.GetFriendships(userId, db); err != nil {
+	var pagination dto.PaginationRequestDto
+	if err := context.ShouldBindQuery(&pagination); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if friendships, err := frienshiprepository.GetFriendships(userId, pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

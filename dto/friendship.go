@@ -2,6 +2,7 @@ package dto
 
 import (
 	"SociLinkApi/models"
+	types "SociLinkApi/types/pagination"
 	"time"
 )
 
@@ -18,6 +19,7 @@ type FriendshipResponseDto struct {
 }
 
 type GetFriendsResponseDto struct {
+	types.PaginationResponse
 	Friends []FriendshipResponseDto
 }
 
@@ -26,6 +28,7 @@ type GetFriendshipResponseDto struct {
 }
 
 type GetFriendshipRequestsResponseDto struct {
+	types.PaginationResponse
 	Requests []FriendshipResponseDto
 }
 

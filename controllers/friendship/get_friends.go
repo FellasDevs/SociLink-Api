@@ -29,10 +29,11 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 		})
 	} else {
 		response := dto.GetFriendsResponseDto{
-			Friends: make([]dto.FriendshipResponseDto, len(friendships)),
+			PaginationResponse: friendships.PaginationResponse,
+			Friends:            make([]dto.FriendshipResponseDto, len(friendships.Friendships)),
 		}
 
-		for i, friendship := range friendships {
+		for i, friendship := range friendships.Friendships {
 			if friendship.FriendID == userId {
 				friendship.Friend = friendship.User
 			}

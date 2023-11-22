@@ -35,10 +35,11 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 		})
 	} else {
 		response := dto.GetUsersByNameResponseDto{
-			Users: make([]dto.UserResponseDto, len(users)),
+			PaginationResponse: users.PaginationResponse,
+			Users:              make([]dto.UserResponseDto, len(users.Users)),
 		}
 
-		for i, user := range users {
+		for i, user := range users.Users {
 			response.Users[i] = dto.UserToUserResponseDto(user)
 		}
 

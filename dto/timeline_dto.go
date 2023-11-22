@@ -5,6 +5,6 @@ type GetMainTimelineResponseDto struct {
 }
 
 type GetUserTimelineResponseDto struct {
-	User  UserResponseDto
+	User  UserWithFriendsResponseDto
 	Posts []PostResponseDto
 }

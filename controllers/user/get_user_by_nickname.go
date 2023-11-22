@@ -6,25 +6,23 @@ import (
 	userrepository "SociLinkApi/repository/user"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/http"
 )
 
-func GetUserById(context *gin.Context, db *gorm.DB) {
-	idString := context.Param("id")
+func GetUserByNickname(context *gin.Context, db *gorm.DB) {
+	nickname := context.Param("nick")
 
-	id, err := uuid.Parse(idString)
-	if err != nil {
+	if nickname == "" {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "id is not a valid uuid",
+			"message": "Apelido do usuário deve ser informado",
 		})
 		return
 	}
 
-	user := models.User{ID: id}
-	if err = userrepository.GetUser(&user, db); err != nil {
+	user := models.User{Nickname: nickname}
+	if err := userrepository.GetUserWithFriends(&user, db); err != nil {
 		var statusCode int
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -40,8 +38,8 @@ func GetUserById(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	response := dto.GetUserByIdResponseDto{
-		User: dto.UserToUserResponseDto(user),
+	response := dto.GetUserByNicknameResponseDto{
+		User: dto.UserToUserWithFriendsResponseDto(user),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

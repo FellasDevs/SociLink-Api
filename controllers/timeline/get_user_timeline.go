@@ -27,7 +27,7 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 	}
 
 	user := models.User{Nickname: nickname}
-	if err := userrepository.GetUser(&user, db); err != nil {
+	if err := userrepository.GetUserWithFriends(&user, db); err != nil {
 		var statusCode int
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -64,7 +64,7 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 	} else {
 		var response dto.GetUserTimelineResponseDto
 
-		response.User = dto.UserToUserResponseDto(user)
+		response.User = dto.UserToUserWithFriendsResponseDto(user)
 
 		response.Posts = make([]dto.PostResponseDto, len(posts))
 

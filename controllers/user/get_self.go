@@ -15,7 +15,7 @@ func GetSelf(context *gin.Context, db *gorm.DB) {
 	userId, _ := context.Get("userId")
 
 	user := models.User{ID: userId.(uuid.UUID)}
-	if err := userrepository.GetUser(&user, db); err != nil {
+	if err := userrepository.GetUserWithFriends(&user, db); err != nil {
 		var statusCode int
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -32,7 +32,7 @@ func GetSelf(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.GetSelfResponseDto{
-		User: dto.UserToUserResponseDto(user),
+		User: dto.UserToUserWithFriendsResponseDto(user),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

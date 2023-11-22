@@ -2,7 +2,7 @@ package timeline
 
 import (
 	"SociLinkApi/dto"
-	frienshiprepository "SociLinkApi/repository/frienship"
+	frienshiprepository "SociLinkApi/repository/friendship"
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"github.com/gin-gonic/gin"

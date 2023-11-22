@@ -3,7 +3,7 @@ package friendshipcontroller
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
-	frienshiprepository "SociLinkApi/repository/frienship"
+	frienshiprepository "SociLinkApi/repository/friendship"
 	userrepository "SociLinkApi/repository/user"
 	"errors"
 	"github.com/gin-gonic/gin"

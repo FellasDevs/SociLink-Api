@@ -3,7 +3,7 @@ package timeline
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
-	frienshiprepository "SociLinkApi/repository/frienship"
+	frienshiprepository "SociLinkApi/repository/friendship"
 	postrepository "SociLinkApi/repository/post"
 	userrepository "SociLinkApi/repository/user"
 	authtypes "SociLinkApi/types/auth"

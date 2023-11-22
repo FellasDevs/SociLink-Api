@@ -3,7 +3,7 @@ package postcontroller
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
-	frienshiprepository "SociLinkApi/repository/frienship"
+	frienshiprepository "SociLinkApi/repository/friendship"
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"errors"

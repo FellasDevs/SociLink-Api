@@ -2,7 +2,7 @@ package timeline
 
 import (
 	"SociLinkApi/dto"
-	frienshiprepository "SociLinkApi/repository/frienship"
+	frienshiprepository "SociLinkApi/repository/friendship"
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	friends, err := frienshiprepository.GetFriendships(userId, pagination, db)
+	friends, err := frienshiprepository.GetAllFriendships(userId, db)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
@@ -52,11 +52,12 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		var response dto.GetMainTimelineResponseDto
+		response := dto.GetMainTimelineResponseDto{
+			PaginationResponse: posts.PaginationResponse,
+			Posts:              make([]dto.PostResponseDto, len(posts.Posts)),
+		}
 
-		response.Posts = make([]dto.PostResponseDto, len(posts))
-
-		for i, post := range posts {
+		for i, post := range posts.Posts {
 			response.Posts[i] = dto.PostToPostResponseDto(post)
 		}
 

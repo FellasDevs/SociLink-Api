@@ -3,7 +3,7 @@ package timeline
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
-	frienshiprepository "SociLinkApi/repository/frienship"
+	frienshiprepository "SociLinkApi/repository/friendship"
 	postrepository "SociLinkApi/repository/post"
 	userrepository "SociLinkApi/repository/user"
 	authtypes "SociLinkApi/types/auth"
@@ -62,13 +62,13 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 			"message": err.Error(),
 		})
 	} else {
-		var response dto.GetUserTimelineResponseDto
+		response := dto.GetUserTimelineResponseDto{
+			PaginationResponse: posts.PaginationResponse,
+			User:               dto.UserToUserWithFriendsResponseDto(user),
+			Posts:              make([]dto.PostResponseDto, len(posts.Posts)),
+		}
 
-		response.User = dto.UserToUserWithFriendsResponseDto(user)
-
-		response.Posts = make([]dto.PostResponseDto, len(posts))
-
-		for i, post := range posts {
+		for i, post := range posts.Posts {
 			response.Posts[i] = dto.PostToPostResponseDto(post)
 		}
 

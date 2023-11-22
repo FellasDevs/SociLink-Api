@@ -2,6 +2,7 @@ package dto
 
 import (
 	"SociLinkApi/models"
+	types "SociLinkApi/types/pagination"
 	"time"
 )
 
@@ -39,6 +40,7 @@ type GetUserByNicknameResponseDto struct {
 }
 
 type GetUsersByNameResponseDto struct {
+	types.PaginationResponse
 	Users []UserResponseDto
 }
 

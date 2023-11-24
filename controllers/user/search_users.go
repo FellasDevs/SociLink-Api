@@ -8,19 +8,9 @@ import (
 	"net/http"
 )
 
-func GetUsersByName(context *gin.Context, db *gorm.DB) {
-	search := context.Param("search")
-
-	if search == "" {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "A pesquisa não pode ser vazia",
-		})
-		return
-	}
-
-	var pagination dto.PaginationRequestDto
-	if err := context.ShouldBindQuery(&pagination); err != nil {
+func SearchUsers(context *gin.Context, db *gorm.DB) {
+	var params dto.SearchUsersRequestDto
+	if err := context.ShouldBindQuery(&params); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),
@@ -28,13 +18,13 @@ func GetUsersByName(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if users, err := userrepository.GetUsersByNameOrNickname(search, pagination, db); err != nil {
+	if users, err := userrepository.GetUsersByNameOrNickname(params.Search, params.PaginationRequestDto, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
 	} else {
-		response := dto.GetUsersByNameResponseDto{
+		response := dto.SearchUsersResponseDto{
 			PaginationResponse: users.PaginationResponse,
 			Users:              make([]dto.UserResponseDto, len(users.Users)),
 		}

@@ -16,11 +16,11 @@ func UserRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		usercontroller.EditUserInfo(context, db)
 	})
 
-	router.GET("/:nick", func(context *gin.Context) {
+	router.GET("/get-user/:nick", func(context *gin.Context) {
 		usercontroller.GetUserByNickname(context, db)
 	})
 
-	router.GET("/search/:search", func(context *gin.Context) {
-		usercontroller.GetUsersByName(context, db)
+	router.GET("/search", func(context *gin.Context) {
+		usercontroller.SearchUsers(context, db)
 	})
 }

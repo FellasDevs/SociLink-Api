@@ -12,11 +12,11 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		postcontroller.CreatePost(context, db)
 	})
 
-	router.GET("/:id", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
+	router.GET("/get-post/:id", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
 		postcontroller.GetPost(context, db)
 	})
 
-	router.GET("/search/:search", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
+	router.GET("/search", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
 		postcontroller.SearchPosts(context, db)
 	})
 

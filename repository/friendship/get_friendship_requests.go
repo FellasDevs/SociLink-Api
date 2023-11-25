@@ -20,7 +20,7 @@ func GetFriendshipRequests(userId uuid.UUID, pagination dto.PaginationRequestDto
 
 	query := db.Preload(clause.Associations).Where(models.Friendship{FriendID: userId, Pending: true})
 
-	utils.UsePagination(query, &friendships.PaginationResponse)
+	utils.UsePagination(query, "*", &friendships.PaginationResponse)
 
 	result := query.Order("created_at desc").Find(&friendships.Friendships).Scan(&friendships.PaginationResponse)
 

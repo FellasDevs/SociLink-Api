@@ -9,7 +9,7 @@ import (
 
 func TimelineRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	router.GET("", middlewares.AuthenticateUser, func(context *gin.Context) {
-		timeline.GetMainTimeline(context, db)
+		timeline.GetOwnTimeline(context, db)
 	})
 
 	router.GET("/:nick", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {

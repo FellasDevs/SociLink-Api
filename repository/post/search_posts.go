@@ -20,17 +20,20 @@ func SearchPosts(search string, userId *uuid.UUID, pagination dto.PaginationRequ
 	query := db.Preload("User")
 
 	query = query.Where("content ILIKE ?", "%"+search+"%")
-
 	query = query.Where("visibility = ?", authtypes.Public)
 
 	if userId != nil {
-		query = query.Joins("LEFT JOIN friendships ON (friendships.friend_id = posts.user_id OR friendships.user_id = posts.user_id)")
+		utils.UseJoinPostsAndFriendships(query)
 
-		query = query.Or("(visibility = ? OR visibility = ?) AND posts.user_id = ?", authtypes.Private, authtypes.Friends, userId)
-		query = query.Or("visibility = ? AND EXISTS(SELECT * FROM friendships WHERE ((friendships.user_id = ? AND friendships.friend_id = posts.user_id) OR (friendships.friend_id = ? AND friendships.user_id = posts.user_id)) LIMIT 1)", authtypes.Friends, userId, userId)
+		query = query.Or("content ILIKE ?", "%"+search+"%")
+		query = query.Where("(visibility = ? OR visibility = ?) AND posts.user_id = ?", authtypes.Private, authtypes.Friends, userId)
+
+		query = query.Or("content ILIKE ?", "%"+search+"%")
+		query = query.Where("visibility = ?", authtypes.Friends)
+		utils.UseAreUserAndPostOwnerFriends(query, *userId)
 	}
 
-	utils.UsePagination(query, &posts.PaginationResponse)
+	utils.UsePagination(query, "DISTINCT posts.id, posts.content, posts.images, posts.visibility, posts.user_id, posts.created_at", &posts.PaginationResponse)
 
 	result := query.Order("posts.created_at desc").Find(&posts.Posts).Scan(&posts.PaginationResponse)
 

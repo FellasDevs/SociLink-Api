@@ -15,6 +15,10 @@ type PostResponseDto struct {
 	CreatedAt  time.Time
 }
 
+type GetPostResponseDto struct {
+	Post PostResponseDto
+}
+
 type CreatePostRequestDto struct {
 	Content    string
 	Images     []string

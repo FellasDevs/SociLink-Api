@@ -17,7 +17,7 @@ func GetUsersByNameOrNickname(search string, pagination dto.PaginationRequestDto
 
 	query := db.Where("name ILIKE ?", "%"+search+"%").Or("nickname ILIKE ?", "%"+search+"%")
 
-	utils.UsePagination(query, &users.PaginationResponse)
+	utils.UsePagination(query, "*", &users.PaginationResponse)
 
 	result := query.Find(&users.Users).Scan(&users.PaginationResponse)
 

@@ -36,6 +36,11 @@ type EditPostResponseDto struct {
 	Post PostResponseDto
 }
 
+type SearchPostRequestDto struct {
+	PaginationRequestDto
+	Search string `form:"search"`
+}
+
 type SearchPostResponseDto struct {
 	types.PaginationResponse
 	Posts []PostResponseDto

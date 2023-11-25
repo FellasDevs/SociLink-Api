@@ -2,7 +2,6 @@ package dto
 
 import (
 	"SociLinkApi/models"
-	types "SociLinkApi/types/pagination"
 	"time"
 )
 
@@ -46,7 +45,6 @@ type SearchPostRequestDto struct {
 }
 
 type SearchPostResponseDto struct {
-	types.PaginationResponse
 	Posts []PostResponseDto
 }
 

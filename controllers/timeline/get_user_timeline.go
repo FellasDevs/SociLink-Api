@@ -6,7 +6,6 @@ import (
 	postrepository "SociLinkApi/repository/post"
 	timelinerepository "SociLinkApi/repository/timeline"
 	userrepository "SociLinkApi/repository/user"
-	types "SociLinkApi/types/pagination"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -51,17 +50,12 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 	}
 
 	var err error
-	posts := types.PostListing{
-		PaginationResponse: types.PaginationResponse{
-			Page:     pagination.Page,
-			PageSize: pagination.PageSize,
-		},
-	}
+	var posts []models.Post
 
 	if userId != nil && *userId == user.ID {
-		err = postrepository.GetPostsByUserId(*userId, &posts, db)
+		posts, err = postrepository.GetPostsByUserId(*userId, pagination, db)
 	} else {
-		err = timelinerepository.GetUserTimeline(userId, user.ID, &posts, db)
+		posts, err = timelinerepository.GetUserTimeline(userId, user.ID, pagination, db)
 	}
 
 	if err != nil {
@@ -71,12 +65,11 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 		})
 	} else {
 		response := dto.GetUserTimelineResponseDto{
-			PaginationResponse: posts.PaginationResponse,
-			User:               dto.UserToUserWithFriendsResponseDto(user),
-			Posts:              make([]dto.PostResponseDto, len(posts.Posts)),
+			User:  dto.UserToUserWithFriendsResponseDto(user),
+			Posts: make([]dto.PostResponseDto, len(posts)),
 		}
 
-		for i, post := range posts.Posts {
+		for i, post := range posts {
 			response.Posts[i] = dto.PostToPostResponseDto(post)
 		}
 

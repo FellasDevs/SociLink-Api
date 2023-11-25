@@ -25,11 +25,10 @@ func SearchUsers(context *gin.Context, db *gorm.DB) {
 		})
 	} else {
 		response := dto.SearchUsersResponseDto{
-			PaginationResponse: users.PaginationResponse,
-			Users:              make([]dto.UserResponseDto, len(users.Users)),
+			Users: make([]dto.UserResponseDto, len(users)),
 		}
 
-		for i, user := range users.Users {
+		for i, user := range users {
 			response.Users[i] = dto.UserToUserResponseDto(user)
 		}
 

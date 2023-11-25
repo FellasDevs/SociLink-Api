@@ -29,11 +29,10 @@ func GetOwnTimeline(context *gin.Context, db *gorm.DB) {
 		})
 	} else {
 		response := dto.GetMainTimelineResponseDto{
-			PaginationResponse: posts.PaginationResponse,
-			Posts:              make([]dto.PostResponseDto, len(posts.Posts)),
+			Posts: make([]dto.PostResponseDto, len(posts)),
 		}
 
-		for i, post := range posts.Posts {
+		for i, post := range posts {
 			response.Posts[i] = dto.PostToPostResponseDto(post)
 		}
 

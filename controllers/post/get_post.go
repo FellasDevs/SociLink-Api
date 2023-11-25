@@ -17,7 +17,7 @@ func GetPost(context *gin.Context, db *gorm.DB) {
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "id is not a valid uuid",
+			"message": "O id informado é inválido",
 		})
 		return
 	}

@@ -39,7 +39,12 @@ type GetUserByNicknameResponseDto struct {
 	User UserWithFriendsResponseDto
 }
 
-type GetUsersByNameResponseDto struct {
+type SearchUsersRequestDto struct {
+	PaginationRequestDto
+	Search string `form:"search"`
+}
+
+type SearchUsersResponseDto struct {
 	types.PaginationResponse
 	Users []UserResponseDto
 }

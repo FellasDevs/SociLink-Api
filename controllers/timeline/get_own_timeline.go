@@ -2,16 +2,14 @@ package timeline
 
 import (
 	"SociLinkApi/dto"
-	frienshiprepository "SociLinkApi/repository/friendship"
-	postrepository "SociLinkApi/repository/post"
-	authtypes "SociLinkApi/types/auth"
+	postrepository "SociLinkApi/repository/timeline"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/http"
 )
 
-func GetMainTimeline(context *gin.Context, db *gorm.DB) {
+func GetOwnTimeline(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
 	userId := uid.(uuid.UUID)
 
@@ -24,29 +22,7 @@ func GetMainTimeline(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	friends, err := frienshiprepository.GetAllFriendships(userId, db)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"success": false,
-			"message": err.Error(),
-		})
-		return
-	}
-
-	userIds := make([]uuid.UUID, len(friends)+1)
-
-	userIds[0] = userId
-	for i, friend := range friends {
-		id := friend.FriendID
-
-		if friend.FriendID == userId {
-			id = friend.UserID
-		}
-
-		userIds[i+1] = id
-	}
-
-	if posts, err := postrepository.GetPostsByUsers(userIds, authtypes.Friends, pagination, db); err != nil {
+	if posts, err := postrepository.GetOwnTimeline(userId, pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

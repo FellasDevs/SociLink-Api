@@ -21,7 +21,7 @@ func GetFriendships(userId uuid.UUID, pagination dto.PaginationRequestDto, db *g
 
 	query = query.Where("(user_id = ? OR friend_id = ?) AND accepted = ?", userId, userId, true)
 
-	utils.UsePagination(query, &friendships.PaginationResponse)
+	utils.UsePagination(query, "*", &friendships.PaginationResponse)
 
 	result := query.Find(&friendships.Friendships).Scan(&friendships.PaginationResponse)
 

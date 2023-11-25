@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func UsePagination(query *gorm.DB, pagination *types.PaginationResponse) {
+func UsePagination(query *gorm.DB, selectArgs string, pagination *types.PaginationResponse) {
 	if pagination.Page == 0 {
 		pagination.Page = 1
 	}
@@ -14,7 +14,7 @@ func UsePagination(query *gorm.DB, pagination *types.PaginationResponse) {
 		pagination.PageSize = 50
 	}
 
-	query = query.Select("*, COUNT(*) OVER() AS total_count")
+	query = query.Select(selectArgs + ", COUNT(*) OVER() AS total_count")
 
 	query = query.Limit(pagination.PageSize).Offset(pagination.PageSize * (pagination.Page - 1))
 }

@@ -3,10 +3,10 @@ package timeline
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
-	frienshiprepository "SociLinkApi/repository/friendship"
 	postrepository "SociLinkApi/repository/post"
+	timelinerepository "SociLinkApi/repository/timeline"
 	userrepository "SociLinkApi/repository/user"
-	authtypes "SociLinkApi/types/auth"
+	types "SociLinkApi/types/pagination"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -43,20 +43,28 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	visibility := authtypes.Public
-
 	uid, exists := context.Get("userId")
+	var userId *uuid.UUID
 	if exists {
-		userId := uid.(uuid.UUID)
-
-		if userId == user.ID {
-			visibility = authtypes.Private
-		} else if _, err := frienshiprepository.GetFriendshipByUsers(userId, user.ID, db); err == nil {
-			visibility = authtypes.Friends
-		}
+		id := uid.(uuid.UUID)
+		userId = &id
 	}
 
-	if posts, err := postrepository.GetPostsByUser(user.ID, visibility, pagination, db); err != nil {
+	var err error
+	posts := types.PostListing{
+		PaginationResponse: types.PaginationResponse{
+			Page:     pagination.Page,
+			PageSize: pagination.PageSize,
+		},
+	}
+
+	if userId != nil && *userId == user.ID {
+		err = postrepository.GetPostsByUserId(*userId, &posts, db)
+	} else {
+		err = timelinerepository.GetUserTimeline(userId, user.ID, &posts, db)
+	}
+
+	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

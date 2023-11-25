@@ -30,7 +30,7 @@ func SearchPosts(search string, userId *uuid.UUID, pagination dto.PaginationRequ
 		query = query.Or("visibility = ? AND EXISTS(SELECT * FROM friendships WHERE ((friendships.user_id = ? AND friendships.friend_id = posts.user_id) OR (friendships.friend_id = ? AND friendships.user_id = posts.user_id)) LIMIT 1)", authtypes.Friends, userId, userId)
 	}
 
-	utils.UsePagination(query, &posts.PaginationResponse)
+	utils.UsePagination(query, "*", &posts.PaginationResponse)
 
 	result := query.Order("posts.created_at desc").Find(&posts.Posts).Scan(&posts.PaginationResponse)
 

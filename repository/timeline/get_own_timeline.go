@@ -24,9 +24,9 @@ func GetOwnTimeline(userId uuid.UUID, pagination dto.PaginationRequestDto, db *g
 	query = query.Where("posts.user_id = ?", userId)
 
 	query = query.Or("visibility = ? OR visibility = ?", authtypes.Friends, authtypes.Public)
-	query = query.Where("EXISTS(SELECT * FROM friendships WHERE ((friendships.user_id = ? AND friendships.friend_id = posts.user_id) OR (friendships.friend_id = ? AND friendships.user_id = posts.user_id)) LIMIT 1)", userId, userId)
+	utils.UseAreUserAndPostOwnerFriends(query, userId)
 
-	utils.UsePagination(query, "posts.id, posts.content, posts.images, posts.visibility, posts.user_id, posts.created_at", &posts.PaginationResponse)
+	utils.UsePagination(query, "DISTINCT posts.id, posts.content, posts.images, posts.visibility, posts.user_id, posts.created_at", &posts.PaginationResponse)
 
 	result := query.Order("posts.created_at desc").Find(&posts.Posts).Scan(&posts.PaginationResponse)
 

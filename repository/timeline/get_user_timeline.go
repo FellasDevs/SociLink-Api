@@ -17,7 +17,8 @@ func GetUserTimeline(userId *uuid.UUID, timelineUserId uuid.UUID, posts *types.P
 	query = query.Where("visibility = ?", authtypes.Public)
 
 	query = query.Or("posts.user_id = ?", timelineUserId)
-	query = query.Where("visibility = ? AND EXISTS(SELECT * FROM friendships WHERE ((friendships.user_id = ? AND friendships.friend_id = ?) OR (friendships.friend_id = ? AND friendships.user_id = ?)) LIMIT 1)", authtypes.Friends, userId, timelineUserId, userId, timelineUserId)
+	query = query.Where("visibility = ?", authtypes.Friends)
+	utils.UseAreUsersFriends(query, *userId, timelineUserId)
 
 	utils.UsePagination(query, "posts.id, posts.content, posts.images, posts.visibility, posts.user_id, posts.created_at", &posts.PaginationResponse)
 

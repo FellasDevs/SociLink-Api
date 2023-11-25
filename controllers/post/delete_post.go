@@ -12,7 +12,6 @@ import (
 
 func DeletePost(context *gin.Context, db *gorm.DB) {
 	postIDString := context.Param("id")
-
 	postID, err := uuid.Parse(postIDString)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
@@ -22,30 +21,14 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	uid, _ := context.Get("userId")
+	userId := uid.(uuid.UUID)
+
 	post := models.Post{ID: postID}
-	if err = postrepository.GetPost(&post, db); err != nil {
+	if err = postrepository.GetPost(&post, &userId, db); err != nil {
 		context.JSON(http.StatusNotFound, gin.H{
 			"success": false,
 			"message": err.Error(),
-		})
-		return
-	}
-
-	uid, exists := context.Get("userId")
-	if !exists {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "Token de autentificação não encontrada",
-		})
-		return
-	}
-
-	userId := uid.(uuid.UUID)
-
-	if userId != post.UserID {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "Você não tem permissão para deletar este post",
 		})
 		return
 	}

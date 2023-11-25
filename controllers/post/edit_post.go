@@ -32,22 +32,14 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	uid, _ := context.Get("userId")
+	userId := uid.(uuid.UUID)
+
 	post := models.Post{ID: postId}
-	if err = postrepository.GetPost(&post, db); err != nil {
+	if err = postrepository.GetPost(&post, &userId, db); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
 			"message": err.Error(),
-		})
-		return
-	}
-
-	uid, _ := context.Get("userId")
-
-	userId := uid.(uuid.UUID)
-	if userId != post.UserID {
-		context.JSON(http.StatusUnauthorized, gin.H{
-			"success": false,
-			"message": "você não tem permissão para editar esse post",
 		})
 		return
 	}

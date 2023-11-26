@@ -1,14 +1,17 @@
 package timelinerepository
 
 import (
+	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	authtypes "SociLinkApi/types/auth"
-	types "SociLinkApi/types/pagination"
 	"SociLinkApi/utils"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-func GetUserTimeline(userId *uuid.UUID, timelineUserId uuid.UUID, posts *types.PostListing, db *gorm.DB) error {
+func GetUserTimeline(userId *uuid.UUID, timelineUserId uuid.UUID, pagination dto.PaginationRequestDto, db *gorm.DB) ([]models.Post, error) {
+	var posts []models.Post
+
 	query := db.Preload("User")
 
 	utils.UseJoinPostsAndFriendships(query)
@@ -20,9 +23,11 @@ func GetUserTimeline(userId *uuid.UUID, timelineUserId uuid.UUID, posts *types.P
 	query = query.Where("visibility = ?", authtypes.Friends)
 	utils.UseAreUsersFriends(query, *userId, timelineUserId)
 
-	utils.UsePagination(query, "posts.id, posts.content, posts.images, posts.visibility, posts.user_id, posts.created_at", &posts.PaginationResponse)
+	utils.UsePagination(query, pagination)
 
-	result := query.Order("created_at desc").Find(&posts.Posts).Scan(&posts.PaginationResponse)
+	query = query.Select("posts.id, posts.content, posts.images, posts.visibility, posts.user_id, posts.created_at")
 
-	return result.Error
+	result := query.Order("created_at desc").Find(&posts)
+
+	return posts, result.Error
 }

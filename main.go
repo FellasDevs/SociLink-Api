@@ -13,8 +13,7 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Erro ao carregar arquivo .env")
-		panic(err)
+		fmt.Println("Falha em carregar arquivo .env")
 	}
 
 	db, err := database.GetDbConnection()

@@ -10,7 +10,7 @@ env:
   SERVICE: ${{ secrets.SERVICE_NAME }}
   REGION: ${{ secrets.SERVICE_REGION }}
   GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-  IMAGE_NAME: gcr.io/${{ secrets.PROJECT_ID }}/site:latest
+  IMAGE_NAME: gcr.io/${{ secrets.PROJECT_ID }}/socilink:latest
 
 jobs:
   deploy:
@@ -43,4 +43,4 @@ jobs:
 
       # deploy image
       - name: Deploy Docker image
-        run: gcloud run deploy site --image $IMAGE_NAME --region southamerica-east1 --memory 128Mi --min-instances 0 --max-instances 1 --platform managed --port 8080 --allow-unauthenticated
+        run: gcloud run deploy socilink --image $IMAGE_NAME --region southamerica-east1 --memory 512Mi --min-instances 0 --max-instances 1 --platform managed --port 8080 --allow-unauthenticated

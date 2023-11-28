@@ -1,0 +1,41 @@
+steps:
+  - id: Build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-f=Dockerfile'
+      - '.'
+
+      - '--build-arg'
+      - 'DB_HOST=$$DB_HOST'
+
+      - '--build-arg'
+      - 'DB_NAME=$$DB_NAME'
+
+      - '--build-arg'
+      - 'DB_PORT=$$DB_PORT'
+
+      - '--build-arg'
+      - 'DB_PW=$$DB_PW'
+
+      - '--build-arg'
+      - 'DB_USER=$$DB_USER'
+
+      - '--build-arg'
+      - 'JWT_KEY=$$JWT_KEY'
+
+    secretEnv: [ 'DB_HOST', 'DB_NAME', 'DB_PORT', 'DB_PW', 'DB_USER', 'JWT_KEY' ]
+availableSecrets:
+  secretManager:
+    - versionName: projects/socilink/secrets/DB_HOST/versions/latest
+      env: 'DB_HOST'
+    - versionName: projects/socilink/secrets/DB_NAME/versions/latest
+      env: 'DB_NAME'
+    - versionName: projects/socilink/secrets/DB_PORT/versions/latest
+      env: 'DB_PORT'
+    - versionName: projects/socilink/secrets/DB_PW/versions/latest
+      env: 'DB_PW'
+    - versionName: projects/socilink/secrets/DB_USER/versions/latest
+      env: 'DB_USER'
+    - versionName: projects/socilink/secrets/JWT_KEY/versions/latest
+      env: 'JWT_KEY'

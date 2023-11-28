@@ -18,7 +18,7 @@ func main() {
 
 	db, err := database.GetDbConnection()
 	if err != nil {
-		fmt.Println("Erro ao conectar com o banco de dados")
+		fmt.Println("Falha ao conectar com o banco de dados")
 		panic(err)
 	}
 

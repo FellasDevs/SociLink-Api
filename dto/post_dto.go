@@ -11,7 +11,8 @@ type PostResponseDto struct {
 	Content    string
 	Images     []string
 	Visibility string
-	Likes      int64
+	Likes      int
+	Liked      bool
 	CreatedAt  time.Time
 }
 
@@ -49,7 +50,7 @@ type SearchPostResponseDto struct {
 	Posts []PostResponseDto
 }
 
-func PostToPostResponseDto(post models.Post, likes int64) PostResponseDto {
+func PostToPostResponseDto(post models.Post, likes int, liked bool) PostResponseDto {
 	return PostResponseDto{
 		Id:         post.ID.String(),
 		User:       UserToUserResponseDto(post.User),
@@ -57,6 +58,7 @@ func PostToPostResponseDto(post models.Post, likes int64) PostResponseDto {
 		Images:     post.Images,
 		Visibility: post.Visibility,
 		Likes:      likes,
+		Liked:      liked,
 		CreatedAt:  post.CreatedAt,
 	}
 }

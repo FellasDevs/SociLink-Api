@@ -15,7 +15,6 @@ import (
 
 func EditPost(context *gin.Context, db *gorm.DB) {
 	var postData dto.EditPostRequestDto
-
 	if err := context.ShouldBindJSON(&postData); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -79,10 +78,18 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	likes, _ := likerepository.CountPostLikes(post.ID, db)
+	likes, _ := likerepository.GetPostLikes(post.ID, db)
+
+	userLikedPost := false
+	for _, like := range likes {
+		if like.UserID == userId {
+			userLikedPost = true
+			break
+		}
+	}
 
 	response := dto.CreatePostResponseDto{
-		Post: dto.PostToPostResponseDto(post, likes),
+		Post: dto.PostToPostResponseDto(post, len(likes), userLikedPost),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

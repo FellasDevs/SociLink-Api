@@ -47,10 +47,20 @@ func GetPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	likes, _ := likerepository.CountPostLikes(post.ID, db)
+	likes, _ := likerepository.GetPostLikes(post.ID, db)
+
+	userLikedPost := false
+	if userId != nil {
+		for _, like := range likes {
+			if like.UserID == *userId {
+				userLikedPost = true
+				break
+			}
+		}
+	}
 
 	response := dto.GetPostResponseDto{
-		Post: dto.PostToPostResponseDto(post, likes),
+		Post: dto.PostToPostResponseDto(post, len(likes), userLikedPost),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

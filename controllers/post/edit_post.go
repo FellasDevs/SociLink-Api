@@ -3,6 +3,7 @@ package postcontroller
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
+	likerepository "SociLinkApi/repository/like"
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"net/http"
@@ -70,8 +71,7 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		post.Visibility = string(visibility)
 	}
 
-	err = postrepository.UpdatePost(&post, db)
-	if err != nil {
+	if err = postrepository.UpdatePost(&post, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
@@ -79,8 +79,10 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	likes, _ := likerepository.CountPostLikes(post.ID, db)
+
 	response := dto.CreatePostResponseDto{
-		Post: dto.PostToPostResponseDto(post),
+		Post: dto.PostToPostResponseDto(post, likes),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

@@ -3,6 +3,7 @@ package timeline
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
+	likerepository "SociLinkApi/repository/like"
 	postrepository "SociLinkApi/repository/post"
 	timelinerepository "SociLinkApi/repository/timeline"
 	userrepository "SociLinkApi/repository/user"
@@ -70,7 +71,8 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 		}
 
 		for i, post := range posts {
-			response.Posts[i] = dto.PostToPostResponseDto(post)
+			likes, _ := likerepository.CountPostLikes(post.ID, db)
+			response.Posts[i] = dto.PostToPostResponseDto(post, likes)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

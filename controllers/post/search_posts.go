@@ -2,6 +2,7 @@ package postcontroller
 
 import (
 	"SociLinkApi/dto"
+	likerepository "SociLinkApi/repository/like"
 	postrepository "SociLinkApi/repository/post"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -37,7 +38,8 @@ func SearchPosts(context *gin.Context, db *gorm.DB) {
 		}
 
 		for i, post := range posts {
-			response.Posts[i] = dto.PostToPostResponseDto(post)
+			likes, _ := likerepository.CountPostLikes(post.ID, db)
+			response.Posts[i] = dto.PostToPostResponseDto(post, likes)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

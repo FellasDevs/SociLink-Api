@@ -34,7 +34,12 @@ func main() {
 
 	routes.SetRoutes(router, db)
 
-	err = router.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	err = router.Run(":" + port)
 
 	if err != nil {
 		panic(err)

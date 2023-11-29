@@ -39,7 +39,7 @@ func main() {
 		port = "8080"
 	}
 
-	err = router.Run(port)
+	err = router.Run(":" + port)
 
 	if err != nil {
 		panic(err)

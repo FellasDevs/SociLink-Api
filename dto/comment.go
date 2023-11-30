@@ -1,11 +1,15 @@
 package dto
 
-import "SociLinkApi/models"
+import (
+	"SociLinkApi/models"
+	"time"
+)
 
 type CommentResponseDto struct {
-	Id      string
-	User    UserResponseDto
-	Content string
+	Id        string
+	User      UserResponseDto
+	Content   string
+	CreatedAt time.Time
 }
 
 type GetPostCommentsRequestDto struct {
@@ -28,8 +32,9 @@ type EditCommentRequestDto struct {
 
 func CommentToResponseDto(comment models.Comment) CommentResponseDto {
 	return CommentResponseDto{
-		Id:      comment.ID.String(),
-		User:    UserToResponseDto(comment.User),
-		Content: comment.Content,
+		Id:        comment.ID.String(),
+		User:      UserToResponseDto(comment.User),
+		Content:   comment.Content,
+		CreatedAt: comment.CreatedAt,
 	}
 }

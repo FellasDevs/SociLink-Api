@@ -11,4 +11,5 @@ func SetRoutes(router *gin.Engine, db *gorm.DB) {
 	AuthRoutes(router.Group("/auth"), db)
 	PostRoutes(router.Group("/posts"), db)
 	TimelineRoutes(router.Group("/timeline"), db)
+	CommentRoutes(router.Group("/comments"), db)
 }

@@ -126,7 +126,7 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.EditUserInfoResponseDto{
-		User: dto.UserToUserResponseDto(user),
+		User: dto.UserToResponseDto(user),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

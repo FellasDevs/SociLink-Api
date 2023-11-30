@@ -80,7 +80,7 @@ func SignInController(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.SignInResponseDto{
-		User:      dto.UserToUserResponseDto(user),
+		User:      dto.UserToResponseDto(user),
 		AuthToken: token,
 	}
 

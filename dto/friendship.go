@@ -29,10 +29,10 @@ type GetFriendshipRequestsResponseDto struct {
 	Requests []FriendshipResponseDto
 }
 
-func FriendshipToFriendshipResponseDto(friendship models.Friendship) FriendshipResponseDto {
+func FriendshipToResponseDto(friendship models.Friendship) FriendshipResponseDto {
 	return FriendshipResponseDto{
 		Id:        friendship.ID.String(),
-		Friend:    UserToUserResponseDto(friendship.Friend),
+		Friend:    UserToResponseDto(friendship.Friend),
 		Accepted:  friendship.Accepted,
 		CreatedAt: friendship.CreatedAt,
 	}

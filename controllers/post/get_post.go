@@ -60,7 +60,7 @@ func GetPost(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.GetPostResponseDto{
-		Post: dto.PostToPostResponseDto(post, len(likes), userLikedPost),
+		Post: dto.PostToResponseDto(post, len(likes), userLikedPost),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

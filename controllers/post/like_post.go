@@ -45,6 +45,14 @@ func LikePost(context *gin.Context, db *gorm.DB) {
 		PostID: postUuid,
 	}
 
+	if err = likerepository.GetLike(&like, db); err == nil {
+		context.JSON(http.StatusConflict, gin.H{
+			"success": false,
+			"message": "Post já curtido",
+		})
+		return
+	}
+
 	if err = likerepository.CreateLike(&like, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,

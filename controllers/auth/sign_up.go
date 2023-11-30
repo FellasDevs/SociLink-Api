@@ -127,7 +127,7 @@ func SignUpController(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.SignUpResponseDto{
-		User:      dto.UserToUserResponseDto(user),
+		User:      dto.UserToResponseDto(user),
 		AuthToken: token,
 	}
 

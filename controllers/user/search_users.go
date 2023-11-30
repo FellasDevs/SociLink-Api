@@ -29,7 +29,7 @@ func SearchUsers(context *gin.Context, db *gorm.DB) {
 		}
 
 		for i, user := range users {
-			response.Users[i] = dto.UserToUserResponseDto(user)
+			response.Users[i] = dto.UserToResponseDto(user)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

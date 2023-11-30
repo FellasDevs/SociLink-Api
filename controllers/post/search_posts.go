@@ -50,7 +50,7 @@ func SearchPosts(context *gin.Context, db *gorm.DB) {
 				}
 			}
 
-			response.Posts[i] = dto.PostToPostResponseDto(post, len(likes), userLikedPost)
+			response.Posts[i] = dto.PostToResponseDto(post, len(likes), userLikedPost)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

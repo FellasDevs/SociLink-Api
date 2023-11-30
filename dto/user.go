@@ -61,7 +61,7 @@ type EditUserInfoResponseDto struct {
 	User UserResponseDto
 }
 
-func UserToUserResponseDto(user models.User) UserResponseDto {
+func UserToResponseDto(user models.User) UserResponseDto {
 	return UserResponseDto{
 		Id:        user.ID.String(),
 		Name:      user.Name,
@@ -79,7 +79,7 @@ func UserToUserWithFriendsResponseDto(user models.User) UserWithFriendsResponseD
 	friends := make([]UserResponseDto, len(user.Friends))
 
 	for i, friend := range user.Friends {
-		friends[i] = UserToUserResponseDto(*friend)
+		friends[i] = UserToResponseDto(*friend)
 	}
 
 	return UserWithFriendsResponseDto{

@@ -34,7 +34,7 @@ func GetAllFriendshipRequests(context *gin.Context, db *gorm.DB) {
 		for i, request := range requests {
 			request.Friend = request.User
 
-			response.Requests[i] = dto.FriendshipToFriendshipResponseDto(request)
+			response.Requests[i] = dto.FriendshipToResponseDto(request)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

@@ -5,8 +5,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateLike(like *models.Like, db *gorm.DB) error {
-	result := db.Create(&like)
+func GetLike(like *models.Like, db *gorm.DB) error {
+	result := db.Where(&like).First(&like)
 
 	return result.Error
 }

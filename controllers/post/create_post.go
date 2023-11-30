@@ -67,7 +67,7 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.CreatePostResponseDto{
-		Post: dto.PostToPostResponseDto(post),
+		Post: dto.PostToPostResponseDto(post, 0, false),
 	}
 
 	context.JSON(http.StatusCreated, gin.H{

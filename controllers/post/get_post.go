@@ -3,6 +3,7 @@ package postcontroller
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
+	likerepository "SociLinkApi/repository/like"
 	postrepository "SociLinkApi/repository/post"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -46,8 +47,20 @@ func GetPost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	likes, _ := likerepository.GetPostLikes(post.ID, db)
+
+	userLikedPost := false
+	if userId != nil {
+		for _, like := range likes {
+			if like.UserID == *userId {
+				userLikedPost = true
+				break
+			}
+		}
+	}
+
 	response := dto.GetPostResponseDto{
-		Post: dto.PostToPostResponseDto(post),
+		Post: dto.PostToPostResponseDto(post, len(likes), userLikedPost),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

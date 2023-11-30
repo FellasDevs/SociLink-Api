@@ -2,6 +2,7 @@ package timeline
 
 import (
 	"SociLinkApi/dto"
+	likerepository "SociLinkApi/repository/like"
 	postrepository "SociLinkApi/repository/timeline"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -33,7 +34,16 @@ func GetOwnTimeline(context *gin.Context, db *gorm.DB) {
 		}
 
 		for i, post := range posts {
-			response.Posts[i] = dto.PostToPostResponseDto(post)
+			likes, _ := likerepository.GetPostLikes(post.ID, db)
+
+			userLikedPost := false
+			for _, like := range likes {
+				if like.UserID == userId {
+					userLikedPost = true
+					break
+				}
+			}
+			response.Posts[i] = dto.PostToPostResponseDto(post, len(likes), userLikedPost)
 		}
 
 		context.JSON(http.StatusOK, gin.H{

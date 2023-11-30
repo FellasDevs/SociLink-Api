@@ -27,4 +27,12 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	router.DELETE("/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
 		postcontroller.DeletePost(context, db)
 	})
+
+	router.POST("/like/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
+		postcontroller.LikePost(context, db)
+	})
+
+	router.DELETE("/like/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
+		postcontroller.DislikePost(context, db)
+	})
 }

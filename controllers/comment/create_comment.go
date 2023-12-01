@@ -24,6 +24,22 @@ func CreateComment(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
+	if params.Content == "" {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Comentário não pode ser vazio",
+		})
+		return
+	}
+
+	if len(params.Content) > 100 {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Comentário deve conter no máximo 100 caracteres",
+		})
+		return
+	}
+
 	postUuid, err := uuid.Parse(params.PostId)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{

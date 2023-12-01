@@ -1,4 +1,4 @@
-package frienshiprepository
+package friendshiprepository
 
 import (
 	"SociLinkApi/models"

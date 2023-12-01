@@ -2,7 +2,7 @@ package friendshipcontroller
 
 import (
 	"SociLinkApi/models"
-	frienshiprepository "SociLinkApi/repository/friendship"
+	friendshiprepository "SociLinkApi/repository/friendship"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -23,7 +23,7 @@ func RemoveFriend(context *gin.Context, db *gorm.DB) {
 	}
 
 	friendship := models.Friendship{ID: friendshipId}
-	if err = frienshiprepository.GetFriendship(&friendship, db); err != nil {
+	if err = friendshiprepository.GetFriendship(&friendship, db); err != nil {
 		var statusCode int
 
 		if err.Error() == "record not found" {
@@ -46,7 +46,7 @@ func RemoveFriend(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if err = frienshiprepository.DeleteFriendship(&friendship, db); err != nil {
+	if err = friendshiprepository.DeleteFriendship(&friendship, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

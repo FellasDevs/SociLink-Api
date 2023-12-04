@@ -51,6 +51,10 @@ type SearchPostResponseDto struct {
 }
 
 func PostToResponseDto(post models.Post, likes int, liked bool) PostResponseDto {
+	if post.Images == nil {
+		post.Images = []string{}
+	}
+
 	return PostResponseDto{
 		Id:         post.ID.String(),
 		User:       UserToResponseDto(post.User),

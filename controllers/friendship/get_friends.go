@@ -2,7 +2,7 @@ package friendshipcontroller
 
 import (
 	"SociLinkApi/dto"
-	frienshiprepository "SociLinkApi/repository/friendship"
+	friendshiprepository "SociLinkApi/repository/friendship"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -22,7 +22,7 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if friendships, err := frienshiprepository.GetFriendships(userId, pagination, db); err != nil {
+	if friendships, err := friendshiprepository.GetFriendships(userId, pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),

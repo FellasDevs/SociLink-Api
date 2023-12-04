@@ -55,9 +55,14 @@ func EditComment(context *gin.Context, db *gorm.DB) {
 			"message": "Erro ao editar o comentário",
 		})
 	} else {
+		response := dto.EditCommentResponseDto{
+			Comment: dto.CommentToResponseDto(comment),
+		}
+
 		context.JSON(http.StatusOK, gin.H{
 			"success": true,
 			"message": "Comentário editado com sucesso",
+			"data":    response,
 		})
 	}
 }

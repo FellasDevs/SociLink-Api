@@ -8,11 +8,11 @@ import (
 )
 
 func CommentRoutes(router *gin.RouterGroup, db *gorm.DB) {
-	router.GET("/", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
+	router.GET("", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
 		commentcontroller.GetPostComments(context, db)
 	})
 
-	router.POST("/", middlewares.AuthenticateUser, func(context *gin.Context) {
+	router.POST("", middlewares.AuthenticateUser, func(context *gin.Context) {
 		commentcontroller.CreateComment(context, db)
 	})
 

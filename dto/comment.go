@@ -26,8 +26,16 @@ type CreateCommentRequestDto struct {
 	Content string
 }
 
+type CreateCommentResponseDto struct {
+	Comment CommentResponseDto
+}
+
 type EditCommentRequestDto struct {
 	Content string `json:"content"`
+}
+
+type EditCommentResponseDto struct {
+	Comment CommentResponseDto
 }
 
 func CommentToResponseDto(comment models.Comment) CommentResponseDto {

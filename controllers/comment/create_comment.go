@@ -70,9 +70,14 @@ func CreateComment(context *gin.Context, db *gorm.DB) {
 		})
 		return
 	} else {
+		response := dto.CreateCommentResponseDto{
+			Comment: dto.CommentToResponseDto(comment),
+		}
+
 		context.JSON(http.StatusCreated, gin.H{
 			"success": true,
 			"message": "Comentário adicionado com sucesso",
+			"data":    response,
 		})
 		return
 	}

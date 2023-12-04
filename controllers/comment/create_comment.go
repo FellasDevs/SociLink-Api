@@ -5,10 +5,11 @@ import (
 	"SociLinkApi/models"
 	commentrepository "SociLinkApi/repository/comment"
 	postrepository "SociLinkApi/repository/post"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 func CreateComment(context *gin.Context, db *gorm.DB) {

@@ -9,26 +9,26 @@ import (
 	"gorm.io/gorm"
 )
 
-func DeleteComment(context *gin.Context, db *gorm.DB) {
-	id := context.Param("id")
-	commentId, err := uuid.Parse(id)
+func DeleteCommentReply(context *gin.Context, db *gorm.DB) {
+	replyId := context.Param("id")
+	replyUuid, err := uuid.Parse(replyId)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "Id do comentário inválido",
+			"message": "Id da resposta do comentário inválido",
 		})
 		return
 	}
 
-	if err = commentrepository.DeleteComment(commentId, db); err != nil {
+	if err = commentrepository.DeleteCommentReply(replyUuid, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"message": "Erro ao deletar o comentário",
+			"message": "Erro ao excluir a resposta do comentário",
 		})
 	} else {
 		context.JSON(http.StatusOK, gin.H{
 			"success": true,
-			"message": "Comentário deletado com sucesso",
+			"message": "Resposta do comentário excluída com sucesso",
 		})
 	}
 }

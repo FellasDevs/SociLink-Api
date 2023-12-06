@@ -6,14 +6,15 @@ import (
 )
 
 type PostResponseDto struct {
-	Id         string
-	User       UserResponseDto
-	Content    string
-	Images     []string
-	Visibility string
-	Likes      int
-	Liked      bool
-	CreatedAt  time.Time
+	Id           string
+	OriginalPost *PostResponseDto
+	User         UserResponseDto
+	Content      string
+	Images       []string
+	Visibility   string
+	Likes        int
+	Liked        bool
+	CreatedAt    time.Time
 }
 
 type GetPostResponseDto struct {
@@ -21,9 +22,10 @@ type GetPostResponseDto struct {
 }
 
 type CreatePostRequestDto struct {
-	Content    string
-	Images     []string
-	Visibility string
+	Content        string
+	OriginalPostId string
+	Images         []string
+	Visibility     string
 }
 
 type CreatePostResponseDto struct {
@@ -50,19 +52,29 @@ type SearchPostResponseDto struct {
 	Posts []PostResponseDto
 }
 
+type GetDeletedPostsResponseDto struct {
+	Posts []PostResponseDto
+}
+
 func PostToResponseDto(post models.Post, likes int, liked bool) PostResponseDto {
 	if post.Images == nil {
 		post.Images = []string{}
 	}
 
+	var originalPost *PostResponseDto = nil
+	if post.OriginalPost != nil {
+		*originalPost = PostToResponseDto(*post.OriginalPost, 0, false)
+	}
+
 	return PostResponseDto{
-		Id:         post.ID.String(),
-		User:       UserToResponseDto(post.User),
-		Content:    post.Content,
-		Images:     post.Images,
-		Visibility: post.Visibility,
-		Likes:      likes,
-		Liked:      liked,
-		CreatedAt:  post.CreatedAt,
+		Id:           post.ID.String(),
+		User:         UserToResponseDto(post.User),
+		OriginalPost: originalPost,
+		Content:      post.Content,
+		Images:       post.Images,
+		Visibility:   post.Visibility,
+		Likes:        likes,
+		Liked:        liked,
+		CreatedAt:    post.CreatedAt,
 	}
 }

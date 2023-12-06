@@ -50,12 +50,54 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 	}
 
 	uid, _ := context.Get("userId")
+	userId := uid.(uuid.UUID)
+
+	var originalPostId *uuid.UUID = nil
+
+	// Check if original post exists
+	if postData.OriginalPostId != "" {
+		if originalPostUuid, err := uuid.Parse(postData.OriginalPostId); err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"message": "Id do post original inválido.",
+			})
+			return
+		} else {
+			originalPost := models.Post{ID: originalPostUuid}
+
+			// Get post user is referencing
+			err = postrepository.GetPost(&originalPost, &userId, db)
+			if err != nil {
+				context.JSON(http.StatusBadRequest, gin.H{
+					"success": false,
+					"message": "Post original não encontrado.",
+				})
+				return
+			}
+
+			// If post user is referencing is a repost, get the original post
+			if originalPost.OriginalPostID != nil {
+				originalPost = models.Post{ID: *originalPost.OriginalPostID}
+				err = postrepository.GetPost(&originalPost, &userId, db)
+				if err != nil {
+					context.JSON(http.StatusBadRequest, gin.H{
+						"success": false,
+						"message": "Post original não encontrado.",
+					})
+					return
+				}
+			}
+
+			originalPostId = &originalPost.ID
+		}
+	}
 
 	post := models.Post{
-		UserID:     uid.(uuid.UUID),
-		Content:    postData.Content,
-		Images:     postData.Images,
-		Visibility: string(visibility),
+		UserID:         userId,
+		OriginalPostID: originalPostId,
+		Content:        postData.Content,
+		Images:         postData.Images,
+		Visibility:     string(visibility),
 	}
 
 	if err := postrepository.CreatePost(&post, db); err != nil {

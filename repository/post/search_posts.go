@@ -16,15 +16,18 @@ func SearchPosts(search string, userId *uuid.UUID, pagination dto.PaginationRequ
 
 	query = query.Where("content ILIKE ?", "%"+search+"%")
 	query = query.Where("visibility = ?", authtypes.Public)
+	query = query.Where("deleted = ?", false)
 
 	if userId != nil {
 		utils.UseJoinPostsAndFriendships(query)
 
 		query = query.Or("content ILIKE ?", "%"+search+"%")
 		query = query.Where("(visibility = ? OR visibility = ?) AND posts.user_id = ?", authtypes.Private, authtypes.Friends, userId)
+		query = query.Where("deleted = ?", false)
 
 		query = query.Or("content ILIKE ?", "%"+search+"%")
 		query = query.Where("visibility = ?", authtypes.Friends)
+		query = query.Where("deleted = ?", false)
 		utils.UseAreUserAndPostOwnerFriends(query, *userId)
 	}
 

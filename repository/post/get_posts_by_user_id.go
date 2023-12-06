@@ -13,7 +13,7 @@ func GetPostsByUserId(userId uuid.UUID, pagination dto.PaginationRequestDto, db 
 
 	query := db.Preload("User")
 
-	query = query.Where("user_id = ?", userId)
+	query = query.Where("user_id = ?", userId).Where("deleted = ?", false)
 
 	utils.UsePagination(query, pagination)
 

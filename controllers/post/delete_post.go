@@ -11,8 +11,8 @@ import (
 )
 
 func DeletePost(context *gin.Context, db *gorm.DB) {
-	postIDString := context.Param("id")
-	postID, err := uuid.Parse(postIDString)
+	postIdString := context.Param("id")
+	postId, err := uuid.Parse(postIdString)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
@@ -24,7 +24,7 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
 	userId := uid.(uuid.UUID)
 
-	post := models.Post{ID: postID}
+	post := models.Post{ID: postId}
 	if err = postrepository.GetPost(&post, &userId, db); err != nil {
 		context.JSON(http.StatusNotFound, gin.H{
 			"success": false,
@@ -33,8 +33,17 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	err = postrepository.DeletePost(postID, db)
-	if err != nil {
+	if post.UserID != userId {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"success": false,
+			"message": "Você não possúi permissão para deletar este post",
+		})
+		return
+	}
+
+	post.Deleted = true
+
+	if err = postrepository.UpdatePost(&post, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
@@ -42,7 +51,7 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{
+	context.JSON(http.StatusNoContent, gin.H{
 		"success": true,
 		"message": "Post deletado com sucesso",
 	})

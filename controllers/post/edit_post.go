@@ -63,7 +63,7 @@ func EditPost(context *gin.Context, db *gorm.DB) {
 
 		if postData.Visibility == "private" {
 			visibility = authtypes.Private
-		} else if visibility == "friends" {
+		} else if postData.Visibility == "friends" {
 			visibility = authtypes.Friends
 		}
 

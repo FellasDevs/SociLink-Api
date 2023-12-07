@@ -28,6 +28,14 @@ func PostRoutes(router *gin.RouterGroup, db *gorm.DB) {
 		postcontroller.DeletePost(context, db)
 	})
 
+	router.GET("/deleted", middlewares.AuthenticateUser, func(context *gin.Context) {
+		postcontroller.GetDeletedPosts(context, db)
+	})
+
+	router.PUT("/recover/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
+		postcontroller.RecoverPost(context, db)
+	})
+
 	router.POST("/like/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
 		postcontroller.LikePost(context, db)
 	})

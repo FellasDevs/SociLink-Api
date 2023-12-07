@@ -2,8 +2,10 @@ package timeline
 
 import (
 	"SociLinkApi/dto"
+	"SociLinkApi/models"
 	likerepository "SociLinkApi/repository/like"
-	postrepository "SociLinkApi/repository/timeline"
+	postrepository "SociLinkApi/repository/post"
+	timelinerepository "SociLinkApi/repository/timeline"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -23,7 +25,7 @@ func GetOwnTimeline(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if posts, err := postrepository.GetOwnTimeline(userId, pagination, db); err != nil {
+	if posts, err := timelinerepository.GetOwnTimeline(userId, pagination, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
@@ -43,7 +45,31 @@ func GetOwnTimeline(context *gin.Context, db *gorm.DB) {
 					break
 				}
 			}
+
 			response.Posts[i] = dto.PostToResponseDto(post, len(likes), userLikedPost)
+
+			if post.OriginalPostID != nil {
+				originalPost := models.Post{
+					ID: *post.OriginalPostID,
+				}
+
+				err = postrepository.GetPost(&originalPost, &userId, db)
+
+				if err == nil {
+					likes, _ = likerepository.GetPostLikes(post.ID, db)
+
+					userLikedPost = false
+					for _, like := range likes {
+						if like.UserID == userId {
+							userLikedPost = true
+							break
+						}
+					}
+
+					originalPostResponseDto := dto.PostToResponseDto(originalPost, len(likes), userLikedPost)
+					response.Posts[i].OriginalPost = &originalPostResponseDto
+				}
+			}
 		}
 
 		context.JSON(http.StatusOK, gin.H{

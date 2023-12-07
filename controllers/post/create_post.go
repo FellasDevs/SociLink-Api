@@ -3,6 +3,7 @@ package postcontroller
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
+	likerepository "SociLinkApi/repository/like"
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"net/http"
@@ -50,12 +51,54 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 	}
 
 	uid, _ := context.Get("userId")
+	userId := uid.(uuid.UUID)
+
+	var originalPostId *uuid.UUID = nil
+
+	// Check if original post exists
+	if postData.OriginalPostId != "" {
+		if originalPostUuid, err := uuid.Parse(postData.OriginalPostId); err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"message": "Id do post original inválido.",
+			})
+			return
+		} else {
+			originalPost := models.Post{ID: originalPostUuid}
+
+			// Get post user is referencing
+			err = postrepository.GetPost(&originalPost, &userId, db)
+			if err != nil {
+				context.JSON(http.StatusBadRequest, gin.H{
+					"success": false,
+					"message": "Post original não encontrado.",
+				})
+				return
+			}
+
+			// If post user is referencing is a repost, get the original post
+			if originalPost.OriginalPostID != nil {
+				originalPost = models.Post{ID: *originalPost.OriginalPostID}
+				err = postrepository.GetPost(&originalPost, &userId, db)
+				if err != nil {
+					context.JSON(http.StatusBadRequest, gin.H{
+						"success": false,
+						"message": "Post original não encontrado.",
+					})
+					return
+				}
+			}
+
+			originalPostId = &originalPost.ID
+		}
+	}
 
 	post := models.Post{
-		UserID:     uid.(uuid.UUID),
-		Content:    postData.Content,
-		Images:     postData.Images,
-		Visibility: string(visibility),
+		UserID:         userId,
+		OriginalPostID: originalPostId,
+		Content:        postData.Content,
+		Images:         postData.Images,
+		Visibility:     string(visibility),
 	}
 
 	if err := postrepository.CreatePost(&post, db); err != nil {
@@ -68,6 +111,29 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 
 	response := dto.CreatePostResponseDto{
 		Post: dto.PostToResponseDto(post, 0, false),
+	}
+
+	if post.OriginalPostID != nil {
+		originalPost := models.Post{
+			ID: *post.OriginalPostID,
+		}
+
+		err := postrepository.GetPost(&originalPost, &userId, db)
+
+		if err == nil {
+			likes, _ := likerepository.GetPostLikes(post.ID, db)
+
+			userLikedPost := false
+			for _, like := range likes {
+				if like.UserID == userId {
+					userLikedPost = true
+					break
+				}
+			}
+
+			originalPostResponseDto := dto.PostToResponseDto(originalPost, len(likes), userLikedPost)
+			response.Post.OriginalPost = &originalPostResponseDto
+		}
 	}
 
 	context.JSON(http.StatusCreated, gin.H{

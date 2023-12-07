@@ -3,20 +3,20 @@ package postcontroller
 import (
 	"SociLinkApi/models"
 	postrepository "SociLinkApi/repository/post"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"net/http"
 )
 
-func DeletePost(context *gin.Context, db *gorm.DB) {
-	postIdString := context.Param("id")
-	postId, err := uuid.Parse(postIdString)
+func RecoverPost(context *gin.Context, db *gorm.DB) {
+	postId := context.Param("id")
+
+	postUuid, err := uuid.Parse(postId)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,
-			"message": "ID de post inválido",
+			"message": "Id do post inválido",
 		})
 		return
 	}
@@ -24,11 +24,15 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 	uid, _ := context.Get("userId")
 	userId := uid.(uuid.UUID)
 
-	post := models.Post{ID: postId}
-	if err = postrepository.GetPost(&post, &userId, db); err != nil {
+	post := models.Post{
+		ID:      postUuid,
+		Deleted: true,
+	}
+
+	if err = postrepository.GetDeletedPost(&post, &userId, db); err != nil {
 		context.JSON(http.StatusNotFound, gin.H{
 			"success": false,
-			"message": err.Error(),
+			"message": "Post não encontrado",
 		})
 		return
 	}
@@ -36,23 +40,23 @@ func DeletePost(context *gin.Context, db *gorm.DB) {
 	if post.UserID != userId {
 		context.JSON(http.StatusUnauthorized, gin.H{
 			"success": false,
-			"message": "Você não possúi permissão para deletar este post",
+			"message": "Você não tem permissão para recuperar este post",
 		})
 		return
 	}
 
-	post.Deleted = true
+	post.Deleted = false
 
 	if err = postrepository.UpdatePost(&post, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
-			"message": err.Error(),
+			"message": "Erro ao recuperar post",
 		})
 		return
 	}
 
-	context.JSON(http.StatusNoContent, gin.H{
+	context.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"message": "Post deletado com sucesso",
+		"message": "Post recuperado com sucesso",
 	})
 }

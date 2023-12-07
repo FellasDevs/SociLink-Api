@@ -63,7 +63,8 @@ func PostToResponseDto(post models.Post, likes int, liked bool) PostResponseDto 
 
 	var originalPost *PostResponseDto = nil
 	if post.OriginalPost != nil {
-		*originalPost = PostToResponseDto(*post.OriginalPost, 0, false)
+		originalPostDto := PostToResponseDto(*post.OriginalPost, 0, false)
+		originalPost = &originalPostDto
 	}
 
 	return PostResponseDto{

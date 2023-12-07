@@ -3,6 +3,7 @@ package postcontroller
 import (
 	"SociLinkApi/dto"
 	"SociLinkApi/models"
+	likerepository "SociLinkApi/repository/like"
 	postrepository "SociLinkApi/repository/post"
 	authtypes "SociLinkApi/types/auth"
 	"net/http"
@@ -110,6 +111,29 @@ func CreatePost(context *gin.Context, db *gorm.DB) {
 
 	response := dto.CreatePostResponseDto{
 		Post: dto.PostToResponseDto(post, 0, false),
+	}
+
+	if post.OriginalPostID != nil {
+		originalPost := models.Post{
+			ID: *post.OriginalPostID,
+		}
+
+		err := postrepository.GetPost(&originalPost, &userId, db)
+
+		if err == nil {
+			likes, _ := likerepository.GetPostLikes(post.ID, db)
+
+			userLikedPost := false
+			for _, like := range likes {
+				if like.UserID == userId {
+					userLikedPost = true
+					break
+				}
+			}
+
+			originalPostResponseDto := dto.PostToResponseDto(originalPost, len(likes), userLikedPost)
+			response.Post.OriginalPost = &originalPostResponseDto
+		}
 	}
 
 	context.JSON(http.StatusCreated, gin.H{

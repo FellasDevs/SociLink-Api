@@ -15,15 +15,18 @@ func GetPost(post *models.Post, userId *uuid.UUID, db *gorm.DB) error {
 
 	query = query.Where("visibility = ?", authtypes.Public)
 	query = query.Where("deleted = ?", false)
+	query = query.Where("posts.id = ?", post.ID)
 
 	if userId != nil {
 		utils.UseJoinPostsAndFriendships(query)
 
 		query = query.Or("posts.user_id = ?", userId)
 		query = query.Where("deleted = ?", false)
+		query = query.Where("posts.id = ?", post.ID)
 
 		query = query.Or("visibility = ?", authtypes.Friends)
 		query = query.Where("deleted = ?", false)
+		query = query.Where("posts.id = ?", post.ID)
 		utils.UseAreUserAndPostOwnerFriends(query, *userId)
 	}
 

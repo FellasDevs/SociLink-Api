@@ -33,7 +33,7 @@ func SearchPosts(search string, userId *uuid.UUID, pagination dto.PaginationRequ
 
 	utils.UsePagination(query, pagination)
 
-	query = query.Select("posts.id, posts.content, posts.images, posts.visibility, posts.user_id, posts.created_at")
+	query = query.Select("posts.id, posts.original_post_id, posts.content, posts.images, posts.visibility, posts.user_id, posts.created_at, posts.deleted")
 
 	result := query.Order("posts.created_at desc").Find(&posts)
 

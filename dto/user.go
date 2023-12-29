@@ -34,6 +34,10 @@ type GetSelfResponseDto struct {
 	User UserWithFriendsResponseDto
 }
 
+type GetUserByNicknameRequestDto struct {
+	Nickname string `form:"nickname" binding:"required"`
+}
+
 type GetUserByNicknameResponseDto struct {
 	User UserWithFriendsResponseDto
 }

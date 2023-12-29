@@ -6,48 +6,31 @@ import (
 	friendshiprepository "SociLinkApi/repository/friendship"
 	userrepository "SociLinkApi/repository/user"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"net/http"
 )
 
 func GetFriends(context *gin.Context, db *gorm.DB) {
-	var userId uuid.UUID
-
-	uid, uidExists := context.Get("userId")
-
 	var params dto.GetFriendsRequestDto
-	if err := context.ShouldBindQuery(&params); err != nil {
+	if err := context.ShouldBindQuery(&params); err != nil || params.Nickname == "" {
 		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "O apelido do usuário deve ser informado e ser válido",
+		})
+		return
+	}
+
+	user := models.User{Nickname: params.Nickname}
+
+	if err := userrepository.GetUser(&user, db); err != nil {
+		context.JSON(http.StatusNotFound, gin.H{
 			"success": false,
 			"message": err.Error(),
 		})
 		return
 	}
 
-	if params.Nickname != "" {
-		user := models.User{Nickname: params.Nickname}
-
-		if err := userrepository.GetUser(&user, db); err != nil {
-			context.JSON(http.StatusNotFound, gin.H{
-				"success": false,
-				"message": err.Error(),
-			})
-			return
-		}
-
-		userId = user.ID
-	} else if uidExists {
-		userId = uid.(uuid.UUID)
-	} else {
-		context.JSON(http.StatusBadRequest, gin.H{
-			"success": false,
-			"message": "Você deve estar logado ou passar um nickname para acesar essa rota",
-		})
-		return
-	}
-
-	if friendships, err := friendshiprepository.GetFriendships(userId, params.PaginationRequestDto, db); err != nil {
+	if friendships, err := friendshiprepository.GetFriendships(user.ID, params.PaginationRequestDto, db); err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{
 			"success": false,
 			"message": err.Error(),
@@ -58,7 +41,7 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 		}
 
 		for i, friendship := range friendships {
-			if friendship.FriendID == userId {
+			if friendship.FriendID == user.ID {
 				friendship.Friend = friendship.User
 			}
 

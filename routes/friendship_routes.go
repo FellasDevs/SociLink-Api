@@ -8,7 +8,7 @@ import (
 )
 
 func FriendshipRoutes(router *gin.RouterGroup, db *gorm.DB) {
-	router.GET("", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
+	router.GET("", func(context *gin.Context) {
 		friendshipcontroller.GetFriends(context, db)
 	})
 

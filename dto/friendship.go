@@ -17,6 +17,11 @@ type FriendshipResponseDto struct {
 	CreatedAt time.Time
 }
 
+type GetFriendsRequestDto struct {
+	PaginationRequestDto
+	Nickname string
+}
+
 type GetFriendsResponseDto struct {
 	Friends []FriendshipResponseDto
 }

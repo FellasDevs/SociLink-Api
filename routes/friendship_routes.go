@@ -8,29 +8,27 @@ import (
 )
 
 func FriendshipRoutes(router *gin.RouterGroup, db *gorm.DB) {
-	router.Use(middlewares.AuthenticateUser)
-
-	router.GET("", func(context *gin.Context) {
+	router.GET("", middlewares.AuthenticateUserOptionally, func(context *gin.Context) {
 		friendshipcontroller.GetFriends(context, db)
 	})
 
-	router.GET("/:nickname", func(context *gin.Context) {
+	router.GET("/:nickname", middlewares.AuthenticateUser, func(context *gin.Context) {
 		friendshipcontroller.GetFriendship(context, db)
 	})
 
-	router.GET("/requests", func(context *gin.Context) {
+	router.GET("/requests", middlewares.AuthenticateUser, func(context *gin.Context) {
 		friendshipcontroller.GetAllFriendshipRequests(context, db)
 	})
 
-	router.POST("/:id", func(context *gin.Context) {
+	router.POST("/requests/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
 		friendshipcontroller.RequestFriendship(context, db)
 	})
 
-	router.POST("/answer", func(context *gin.Context) {
+	router.PUT("/requests", middlewares.AuthenticateUser, func(context *gin.Context) {
 		friendshipcontroller.AnswerFriendshipRequest(context, db)
 	})
 
-	router.DELETE("/:id", func(context *gin.Context) {
+	router.DELETE("/:id", middlewares.AuthenticateUser, func(context *gin.Context) {
 		friendshipcontroller.RemoveFriend(context, db)
 	})
 }

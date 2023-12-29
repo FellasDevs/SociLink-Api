@@ -24,7 +24,7 @@ func GetUserByNickname(context *gin.Context, db *gorm.DB) {
 	nickname := params.Nickname
 
 	user := models.User{Nickname: nickname}
-	if err := userrepository.GetUserWithFriends(&user, db); err != nil {
+	if err := userrepository.GetUser(&user, db); err != nil {
 		var statusCode int
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -41,7 +41,7 @@ func GetUserByNickname(context *gin.Context, db *gorm.DB) {
 	}
 
 	response := dto.GetUserByNicknameResponseDto{
-		User: dto.UserToUserWithFriendsResponseDto(user),
+		User: dto.UserToResponseDto(user),
 	}
 
 	context.JSON(http.StatusOK, gin.H{

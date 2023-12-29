@@ -19,7 +19,7 @@ type FriendshipResponseDto struct {
 
 type GetFriendsRequestDto struct {
 	PaginationRequestDto
-	Nickname string
+	Nickname string `form:"nickname"`
 }
 
 type GetFriendsResponseDto struct {

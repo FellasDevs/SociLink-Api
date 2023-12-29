@@ -25,9 +25,7 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	if uidExists {
-		userId = uid.(uuid.UUID)
-	} else if params.Nickname != "" {
+	if params.Nickname != "" {
 		user := models.User{Nickname: params.Nickname}
 
 		if err := userrepository.GetUser(&user, db); err != nil {
@@ -39,6 +37,8 @@ func GetFriends(context *gin.Context, db *gorm.DB) {
 		}
 
 		userId = user.ID
+	} else if uidExists {
+		userId = uid.(uuid.UUID)
 	} else {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"success": false,

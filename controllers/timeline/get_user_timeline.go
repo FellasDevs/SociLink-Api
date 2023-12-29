@@ -17,6 +17,14 @@ import (
 func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 	nickname := context.Param("nick")
 
+	if nickname == "" {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "O apelido não pode ser vazio",
+		})
+		return
+	}
+
 	var pagination dto.PaginationRequestDto
 	if err := context.ShouldBindQuery(&pagination); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
@@ -26,8 +34,8 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	user := models.User{Nickname: nickname}
-	if err := userrepository.GetUserWithFriends(&user, db); err != nil {
+	user, err := userrepository.GetUserWithFriendsCount(models.User{Nickname: nickname}, db)
+	if err != nil {
 		var statusCode int
 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -50,8 +58,8 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 		userId = &id
 	}
 
-	var err error
 	var posts []models.Post
+	err = nil
 
 	if userId != nil && *userId == user.ID {
 		posts, err = postrepository.GetPostsByUserId(*userId, pagination, db)
@@ -66,7 +74,7 @@ func GetUserTimeline(context *gin.Context, db *gorm.DB) {
 		})
 	} else {
 		response := dto.GetUserTimelineResponseDto{
-			User:  dto.UserToUserWithFriendsResponseDto(user),
+			User:  dto.UserToUserWithFriendsCountResponseDto(user),
 			Posts: make([]dto.PostResponseDto, len(posts)),
 		}
 

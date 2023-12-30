@@ -81,15 +81,15 @@ func EditUserInfo(context *gin.Context, db *gorm.DB) {
 			user.City = userInfo.City
 		}
 	}
-	if userInfo.Picture != user.Picture {
-		if _, err := url.Parse(userInfo.Picture); err == nil || userInfo.Picture == "" {
+	if userInfo.Picture != user.Picture && userInfo.Picture != "" {
+		if _, err := url.Parse(userInfo.Picture); err == nil {
 			user.Picture = userInfo.Picture
 		} else {
 			fieldErrors = append(fieldErrors, "URL da foto de perfil inválida.")
 		}
 	}
-	if userInfo.Banner != user.Banner {
-		if _, err := url.Parse(userInfo.Banner); err == nil || userInfo.Banner == "" {
+	if userInfo.Banner != user.Banner && userInfo.Banner != "" {
+		if _, err := url.Parse(userInfo.Banner); err == nil {
 			user.Banner = userInfo.Banner
 		} else {
 			fieldErrors = append(fieldErrors, "URL do banner de perfil inválida.")
